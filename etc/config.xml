@@ -36,7 +36,7 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_cash_on_delivery>
-            <payone_creditcard>
+            <payone_creditcard translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Creditcard</model>
@@ -46,7 +46,7 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_creditcard>
-            <payone_debit>
+            <payone_debit translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Debit</model>
@@ -55,7 +55,7 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_debit>
-            <payone_paypal>
+            <payone_paypal translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Paypal</model>
