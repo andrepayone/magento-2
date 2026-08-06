@@ -49,6 +49,11 @@ class ViewTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();

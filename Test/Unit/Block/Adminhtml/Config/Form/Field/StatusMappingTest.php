@@ -51,6 +51,11 @@ class StatusMappingTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Multiselect|\PHPUnit_Framework_MockObject_MockObject
      */
     private $element;
@@ -74,6 +79,7 @@ class StatusMappingTest extends BaseTestCase
                 'setValues',
             ])
             ->getMock();
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

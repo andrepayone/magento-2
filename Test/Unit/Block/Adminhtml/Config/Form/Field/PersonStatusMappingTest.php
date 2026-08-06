@@ -49,6 +49,8 @@ class PersonStatusMappingTest extends BaseTestCase
      */
     private $objectManager;
 
+    protected $needsObjectManagerMock = true;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -62,12 +64,16 @@ class PersonStatusMappingTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'NONE', 'label' => 'NONE'],
+            ],
+        ]);
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

@@ -48,6 +48,12 @@ class StatusForwardingTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -61,12 +67,16 @@ class StatusForwardingTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'paid', 'label' => 'PAID'],
+            ],
+        ]);
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

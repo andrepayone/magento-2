@@ -49,6 +49,11 @@ class SepaDataTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Payment
      */
     private $payment;
@@ -64,13 +69,13 @@ class SepaDataTest extends BaseTestCase
             ->onlyMethods([
                 'getPayment',
             ])
-            ->addMethods([
-                'getPayoneRefundIban',
-                'getPayoneRefundBic',
-            ])
             ->getMock();
-        $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
-        $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
+
+        $order->setData([
+            'payone_refund_iban' => 'DE85123456782599100003',
+            'payone_refund_bic' => 'TESTTEST',
+        ]);
+
         $order->method('getPayment')->willReturn($this->payment);
 
         $creditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();

@@ -72,12 +72,8 @@ class RefreshRatepayProfilesTest extends BaseTestCase
                 'getOriginalData'
             ])
             ->getMock();
-        $element->method('unsScope')->willReturn($element);
-        $element->method('unsCanUseWebsiteValue')->willReturn($element);
-        $element->method('unsCanUseDefaultValue')->willReturn($element);
+
         $element->method('getHtmlId')->willReturn('test');
-        $element->method('getLabel')->willReturn('test');
-        $element->method('getOriginalData')->willReturn(['path' => 'payone_payment/ratepay_invoice']);
 
         $result = $this->classToTest->render($element);
         $this->assertNotEmpty($result);
