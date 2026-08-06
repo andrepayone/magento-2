@@ -73,11 +73,6 @@ class StatusMappingTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
 
         $element->method('getForm')->willReturn($form);
