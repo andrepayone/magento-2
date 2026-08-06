@@ -67,7 +67,7 @@ class DebitTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError'])
+            ->onlyMethods(['__call'])
             ->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
@@ -80,7 +80,7 @@ class DebitTest extends BaseTestCase
     {
         $expected = 'test text';
 
-        $this->checkoutSession->method('getPayoneMandate')->willReturn([
+        $this->checkoutSession->method('__call')->with('getPayoneMandate')->willReturn([
             'mandate_status' => 'pending',
             'mandate_text' => urlencode($expected)
         ]);
@@ -91,7 +91,7 @@ class DebitTest extends BaseTestCase
 
     public function testGetMandateTextFalse()
     {
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(false);
+        $this->checkoutSession->method('__call')->with('getPayoneMandate')->willReturn(false);
 
         $result = $this->classToTest->getMandateText();
         $this->assertFalse($result);
@@ -100,7 +100,7 @@ class DebitTest extends BaseTestCase
     public function testGetMandateId()
     {
         $expected = '12345';
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => $expected]);
+        $this->checkoutSession->method('__call')->with('getPayoneMandate')->willReturn(['mandate_identification' => $expected]);
 
         $result = $this->classToTest->getMandateId();
         $this->assertEquals($expected, $result);
@@ -108,7 +108,7 @@ class DebitTest extends BaseTestCase
 
     public function testGetMandateIdFalse()
     {
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(false);
+        $this->checkoutSession->method('__call')->with('getPayoneMandate')->willReturn(false);
 
         $result = $this->classToTest->getMandateId();
         $this->assertFalse($result);
@@ -126,7 +126,10 @@ class DebitTest extends BaseTestCase
     public function testGetErrorMessage()
     {
         $expected = 'An error occured';
-        $this->checkoutSession->method('getPayoneDebitError')->willReturn($expected);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getPayoneDebitError', [], $expected],
+            ['unsPayoneDebitError', [], null],
+        ]);
 
         $result = $this->classToTest->getErrorMessage();
         $this->assertEquals($expected, $result);

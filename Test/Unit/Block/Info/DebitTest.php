@@ -58,16 +58,17 @@ class DebitTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneTxid'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneTxid')->willReturn('12345');
+
+        $order->setData('payone_txid', '12345');
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getLastTransId', 'getOrder'])
             ->getMock();
-        $this->info->method('getOrder')->willReturn($order);
+
+        $this->info->setData('order', $order);
 
         $rawStatus = [
             'iban' => '12345',
@@ -92,7 +93,7 @@ class DebitTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('IBAN', $result);
@@ -103,7 +104,7 @@ class DebitTest extends BaseTestCase
 
     public function testPrepareSpecificInformationNoLastTransId()
     {
-        $this->info->method('getLastTransId')->willReturn('');
+        $this->info->setData('last_trans_id', '');
         $this->info->method('getAdditionalInformation')->willReturn('abc');
 
         $result = $this->classToTest->getSpecificInformation();

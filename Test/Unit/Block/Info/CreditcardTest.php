@@ -63,27 +63,27 @@ class CreditcardTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneTxid'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneTxid')->willReturn('12345');
+
+        $order->setData('payone_txid', '12345');
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getLastTransId', 'getOrder'])
             ->getMock();
-        $this->info->method('getOrder')->willReturn($order);
+
+        $this->info->setData('order', $order);
 
         $this->transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getCardpan',
-                'getCardtype',
-                'getCardexpiredate'
-            ])
+            ->onlyMethods([])
             ->getMock();
-        $this->transactionStatus->method('getCardpan')->willReturn('12345');
-        $this->transactionStatus->method('getCardexpiredate')->willReturn('12345');
+
+        $this->transactionStatus->setData([
+            'cardpan' => '12345',
+            'cardexpiredate' => '12345',
+        ]);
 
         $transactionStatusRepository = $this->getMockBuilder(TransactionStatusRepository::class)->disableOriginalConstructor()->getMock();
         $transactionStatusRepository->method('getAppointedByTxid')->willReturn($this->transactionStatus);
@@ -96,12 +96,13 @@ class CreditcardTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->transactionStatus->method('getCardtype')->willReturn('visa');
+        $this->transactionStatus->setData('cardtype', 'V');
 
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Credit Card Type', $result);
+        $this->assertEquals('Visa', $result['Credit Card Type']);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
@@ -109,12 +110,13 @@ class CreditcardTest extends BaseTestCase
 
     public function testPrepareSpecificInformationUnknownCCType()
     {
-        $this->transactionStatus->method('getCardtype')->willReturn('ABC');
+        $this->transactionStatus->setData('cardtype', 'ABC');
 
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Credit Card Type', $result);
+        $this->assertEquals('', $result['Credit Card Type']);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
@@ -122,7 +124,7 @@ class CreditcardTest extends BaseTestCase
 
     public function testPrepareSpecificInformationNoLastTransId()
     {
-        $this->info->method('getLastTransId')->willReturn('');
+        $this->info->setData('last_trans_id', '');
         $this->info->method('getAdditionalInformation')->willReturn('123');
 
         $result = $this->classToTest->getSpecificInformation();

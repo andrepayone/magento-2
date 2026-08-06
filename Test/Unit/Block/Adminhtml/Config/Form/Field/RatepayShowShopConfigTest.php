@@ -50,6 +50,11 @@ class RatepayShowShopConfigTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Ratepay
      */
     private $ratepayHelper;
@@ -121,6 +126,7 @@ class RatepayShowShopConfigTest extends BaseTestCase
 
         $element = $this->getMockBuilder(Multiselect::class)
             ->disableOriginalConstructor()
+            ->onlyMethods([])
             ->getMock();
 
         $element->setData([
@@ -129,7 +135,7 @@ class RatepayShowShopConfigTest extends BaseTestCase
 
         $this->classToTest->setData('element', $element);
 
-        $this->ratepayHelper->method('getRatepayShopConfigIdsByPaymentMethod')->willReturn(['12345']);
+        $this->ratepayHelper->method('getRatepayShopConfigIdsByPaymentMethod')->with('ratepay_invoice')->willReturn(['12345']);
 
         $expected = [['shop_id' => '12345']];
         $this->ratepayProfileResource->method('getProfileConfigsByIds')->willReturn($expected);

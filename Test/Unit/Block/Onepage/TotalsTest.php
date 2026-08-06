@@ -39,6 +39,11 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 class TotalsTest extends BaseTestCase
 {
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var ClassToTest
      */
     private $classToTest;
@@ -74,10 +79,13 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getBaseCurrencyCode')->willReturn('EUR');
-        $quote->method('getQuoteCurrencyCode')->willReturn('GBP');
+
+        $quote->setData([
+            'base_currency_code' => 'EUR',
+            'quote_currency_code' => 'GBP',
+        ]);
 
         $this->classToTest->setCustomQuote($quote);
 
@@ -89,10 +97,13 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getBaseCurrencyCode')->willReturn('EUR');
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+
+        $quote->setData([
+            'base_currency_code' => 'EUR',
+            'quote_currency_code' => 'EUR',
+        ]);
 
         $this->classToTest->setCustomQuote($quote);
 

@@ -36,6 +36,11 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 class DetailsTest extends BaseTestCase
 {
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var ClassToTest
      */
     private $classToTest;

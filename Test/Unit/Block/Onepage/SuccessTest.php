@@ -83,13 +83,7 @@ class SuccessTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getLastRealOrder'])
-            ->addMethods([
-                'getPayoneInstructionNotes',
-                'unsPayoneInstructionNotes',
-                'unsShowAmazonPendingNotice',
-                'getShowAmazonPendingNotice',
-            ])
+            ->onlyMethods(['getLastRealOrder', '__call'])
             ->getMock();
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
@@ -107,9 +101,10 @@ class SuccessTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandateId'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneMandateId')->willReturn('15');
+
+        $order->setData('payone_mandate_id', '15');
 
         $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
 
@@ -137,7 +132,9 @@ class SuccessTest extends BaseTestCase
     public function testGetInstructionNotes()
     {
         $expected = 'Instruction text';
-        $this->checkoutSession->method('getPayoneInstructionNotes')->willReturn($expected);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getPayoneInstructionNotes', [], $expected],
+        ]);
 
         $result = $this->classToTest->getInstructionNotes();
         $this->assertEquals($expected, $result);
@@ -145,7 +142,9 @@ class SuccessTest extends BaseTestCase
 
     public function testShowAmazonPendingMessage()
     {
-        $this->checkoutSession->method('getShowAmazonPendingNotice')->willReturn(true);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getShowAmazonPendingNotice', [], true],
+        ]);
 
         $result = $this->classToTest->showAmazonPendingMessage();
         $this->assertTrue($result);
@@ -153,7 +152,9 @@ class SuccessTest extends BaseTestCase
 
     public function testToHtml()
     {
-        $this->checkoutSession->method('getPayoneInstructionNotes')->willReturn('Dummy text');
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getPayoneInstructionNotes', [], 'Dummy text'],
+        ]);
 
         $result = $this->classToTest->toHtml();
         $expected = '';
@@ -163,7 +164,9 @@ class SuccessTest extends BaseTestCase
     public function testToHtmlEmpty()
     {
         $this->paymentHelper->method('isMandateManagementDownloadActive')->willReturn(false);
-        $this->checkoutSession->method('getPayoneInstructionNotes')->willReturn(null);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getPayoneInstructionNotes', [], null],
+        ]);
 
         $result = $this->classToTest->toHtml();
         $expected = '';

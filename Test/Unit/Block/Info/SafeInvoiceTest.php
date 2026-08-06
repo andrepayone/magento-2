@@ -58,33 +58,37 @@ class SafeInvoiceTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneTxid'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneTxid')->willReturn('12345');
+
+        $order->setData('payone_txid', '12345');
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getLastTransId', 'getOrder'])
+            ->onlyMethods([])
             ->getMock();
-        $this->info->method('getOrder')->willReturn($order);
+
+        $this->info->setData('order', $order);
 
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getClearingBankcode',
-                'getClearingBankaccountholder',
-                'getClearingBankaccount',
-                'getClearingBankiban',
-                'getClearingBankbic',
-                'getClearingBankname'
-            ])
+            ->onlyMethods([])
             ->getMock();
-        $transactionStatus->method('getClearingBankcode')->willReturn('12345');
-        $transactionStatus->method('getClearingBankaccountholder')->willReturn('12345');
-        $transactionStatus->method('getClearingBankaccount')->willReturn('12345');
-        $transactionStatus->method('getClearingBankiban')->willReturn('12345');
-        $transactionStatus->method('getClearingBankbic')->willReturn('12345');
-        $transactionStatus->method('getClearingBankname')->willReturn('12345');
+
+        $transactionStatus->setData([
+            'clearing_bankcode' => '12345',
+            'clearing_bankaccountholder' => '12345',
+            'clearing_bankaccount' => '12345',
+            'clearing_bankiban' => '12345',
+            'clearing_bankbic' => '12345',
+            'clearing_bankname' => '12345',
+            'clearing_bankcountry' => 'DE',
+            'clearing_bankcity' => 'Berlin',
+            'clearing_reference' => 'CLEARING-REFERENCE',
+            'clearing_legalnote' => 'LEGAL-NOTE',
+            'clearing_instructionnote' => 'INSTRUCTION-NOTE',
+            'clearing_duedate' => '2026-01-01',
+        ]);
 
         $transactionStatusRepository = $this->getMockBuilder(TransactionStatusRepository::class)->disableOriginalConstructor()->getMock();
         $transactionStatusRepository->method('getAppointedByTxid')->willReturn($transactionStatus);
@@ -97,10 +101,25 @@ class SafeInvoiceTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
+
+        $expected = [
+            'Payment reference' => '12345',
+            'Accountholder' => '12345',
+            'IBAN' => '12345',
+            'BIC' => '12345',
+            'Bank' => '12345',
+            'Bank country' => 'DE',
+            'Bank city' => 'Berlin',
+            'Payment Reference' => 'CLEARING-REFERENCE',
+            'Legal note' => 'LEGAL-NOTE',
+            'Instruction note' => 'INSTRUCTION-NOTE',
+            'Due date' => '2026-01-01',
+        ];
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('IBAN', $result);
+        $this->assertEquals($expected, $result);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
@@ -108,7 +127,7 @@ class SafeInvoiceTest extends BaseTestCase
 
     public function testPrepareSpecificInformationNoLastTransId()
     {
-        $this->info->method('getLastTransId')->willReturn('');
+        $this->info->setData('last_trans_id', '');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Payment has not been processed yet.', $result);

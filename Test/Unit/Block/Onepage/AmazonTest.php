@@ -86,8 +86,7 @@ class AmazonTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
@@ -189,7 +188,7 @@ class AmazonTest extends BaseTestCase
     public function testGetOrderReferenceId()
     {
         $expected = '12345';
-        $this->checkoutSession->method('getAmazonReferenceId')->willReturn($expected);
+        $this->checkoutSession->method('__call')->with('getAmazonReferenceId')->willReturn($expected);
 
         $result = $this->classToTest->getOrderReferenceId();
         $this->assertEquals($expected, $result);
@@ -197,7 +196,7 @@ class AmazonTest extends BaseTestCase
 
     public function testTriggerInvalidPayment()
     {
-        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(null);
+        $this->checkoutSession->method('__call')->with('getTriggerInvalidPayment')->willReturn(null);
 
         $result = $this->classToTest->triggerInvalidPayment();
         $this->assertFalse($result);
@@ -205,7 +204,7 @@ class AmazonTest extends BaseTestCase
 
     public function testTriggerInvalidPaymentTrue()
     {
-        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(['a']);
+        $this->checkoutSession->method('__call')->with('getTriggerInvalidPayment')->willReturn(['a']);
 
         $result = $this->classToTest->triggerInvalidPayment();
         $this->assertTrue($result);
