@@ -64,14 +64,17 @@ class RefreshRatepayProfilesTest extends BaseTestCase
             ->onlyMethods([
                 'getHtmlId',
             ])
-            ->addMethods([
-                'unsScope',
-                'unsCanUseWebsiteValue',
-                'unsCanUseDefaultValue',
-                'getLabel',
-                'getOriginalData'
-            ])
             ->getMock();
+
+        $element->setData([
+            'label' => 'test',
+            'original_data' => [
+                'path' => 'payone_payment/ratepay_invoice'
+            ],
+            'scope' => true,
+            'can_use_website_value' => true,
+            'can_use_default_value' => true,
+        ]);
 
         $element->method('getHtmlId')->willReturn('test');
 
