@@ -64,23 +64,25 @@ class AmazonConfigurationTest extends BaseTestCase
             ->onlyMethods([
                 'getHtmlId',
             ])
-            ->addMethods([
-                'unsScope',
-                'unsCanUseWebsiteValue',
-                'unsCanUseDefaultValue',
-                'getLabel',
-                'getOriginalData'
-            ])
             ->getMock();
-        $element->method('unsScope')->willReturn($element);
-        $element->method('unsCanUseWebsiteValue')->willReturn($element);
-        $element->method('unsCanUseDefaultValue')->willReturn($element);
+
         $element->method('getHtmlId')->willReturn('test');
-        $element->method('getLabel')->willReturn('test');
-        $element->method('getOriginalData')->willReturn(['button_label' => 'test']);
+
+        $element->setData([
+            'label' => 'test',
+            'original_data' => [
+                'button_label' => 'test'
+            ],
+            'scope' => true,
+            'can_use_website_value' => true,
+            'can_use_default_value' => true,
+        ]);
 
         $result = $this->classToTest->render($element);
         $this->assertNotEmpty($result);
+        $this->assertFalse($element->hasData('scope'));
+        $this->assertFalse($element->hasData('can_use_website_value'));
+        $this->assertFalse($element->hasData('can_use_default_value'));
     }
 
     public function testPrepareLayout()

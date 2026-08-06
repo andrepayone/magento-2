@@ -48,6 +48,8 @@ class KlarnaStoreIdTest extends BaseTestCase
      */
     private $objectManager;
 
+    protected $needsObjectManagerMock = true;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -62,15 +64,18 @@ class KlarnaStoreIdTest extends BaseTestCase
                 'getName',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
         $element->method('getForm')->willReturn($form);
-        $element->method('getName')->willReturn("test");
         $element->method('getElementHtml')->willReturn('html');
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'DE', 'label' => 'Deutschland'],
+            ],
+        ]);
 
         $elementFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
         $elementFactory->method('create')->willReturn($element);
