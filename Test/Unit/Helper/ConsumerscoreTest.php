@@ -35,6 +35,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
 use Magento\Quote\Model\Quote\Address;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -207,7 +208,7 @@ class ConsumerscoreTest extends BaseTestCase
     /**
      * @return array
      */
-    public function getScoreArrays()
+    public static function getScoreArrays()
     {
         return [
             [['Y', 'G', 'R'], 'R'],
@@ -219,9 +220,8 @@ class ConsumerscoreTest extends BaseTestCase
     /**
      * @param array $scores
      * @param string $expected
-     *
-     * @dataProvider getScoreArrays
      */
+    #[DataProvider('getScoreArrays')]
     public function testGetWorstScore($scores, $expected)
     {
         $result = $this->consumerscore->getWorstScore($scores);
@@ -257,11 +257,8 @@ class ConsumerscoreTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['setPayoneProtectScore', 'getPayoneProtectScore'])
             ->getMock();
-        $address->method('setPayoneProtectScore')->willReturn($address);
         $address->method('save')->willReturn(true);
-        $address->method('getPayoneProtectScore')->willReturn($expected);
 
         $this->consumerscore->copyOldStatusToNewAddress($address);
         $this->assertEquals($expected, $address->getPayoneProtectScore());

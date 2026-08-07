@@ -127,10 +127,10 @@ class CaptureTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn('12345');
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', '12345');
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -182,10 +182,10 @@ class CaptureTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn('12345');
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', '12345');
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);

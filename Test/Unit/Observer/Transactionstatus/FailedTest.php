@@ -69,8 +69,8 @@ class FailedTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getCustomerEmail')->willReturn('test@test.com');
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $observer->method('getOrder')->willReturn($order);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

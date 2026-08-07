@@ -60,9 +60,17 @@ class DebitTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandate', 'unsPayoneMandate'])
+            ->onlyMethods(['__call'])
             ->getMock();
-        $checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => '123', 'mandate_status' => 'pending']);
+        $checkoutSessionData = [
+            'getPayoneMandate' => ['mandate_identification' => '123', 'mandate_status' => 'pending'],
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $toolkitHelper,

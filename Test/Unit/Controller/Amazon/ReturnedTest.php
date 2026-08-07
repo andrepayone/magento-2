@@ -48,6 +48,13 @@ class ReturnedTest extends BaseTestCase
      */
     private $getCheckoutSession;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -81,16 +88,8 @@ class ReturnedTest extends BaseTestCase
                 'collectTotals',
                 'save',
             ])
-            ->addMethods([
-                'setCustomerId',
-                'setCustomerEmail',
-                'setCustomerGroupId',
-                'setInventoryProcessed',
-            ])
             ->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
-        $quote->method('setCustomerId')->willReturn($quote);
-        $quote->method('setCustomerEmail')->willReturn($quote);
         $quote->method('setCustomerIsGuest')->willReturn($quote);
         $quote->method('getPayment')->willReturn($payment);
         $quote->method('collectTotals')->willReturn($quote);
@@ -104,18 +103,17 @@ class ReturnedTest extends BaseTestCase
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
-                'getQuote'
-            ])
-            ->addMethods([
-                'getPayoneWorkorderId',
-                'setIsPayonePayPalExpress',
-                'getPayonePayPalExpressRetry',
-                'unsPayonePayPalExpressRetry',
-                'setPayoneQuoteAddressHash',
-                'setPayoneExpressAddressResponse',
+                'getQuote',
+                '__call',
             ])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->returnHandler = $this->getMockBuilder(ReturnHandler::class)->disableOriginalConstructor()->getMock();
 
@@ -131,7 +129,7 @@ class ReturnedTest extends BaseTestCase
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
 
         $response = ['status' => 'OK'];
 
@@ -143,7 +141,7 @@ class ReturnedTest extends BaseTestCase
 
     public function testExecuteException()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
 
         $response = ['status' => 'ERROR'];
 
@@ -158,7 +156,7 @@ class ReturnedTest extends BaseTestCase
 
     public function testExecutePayPal()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $this->checkoutSessionData['getPayoneWorkorderId'] = null;
 
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);

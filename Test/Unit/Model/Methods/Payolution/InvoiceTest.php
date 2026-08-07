@@ -111,9 +111,8 @@ class InvoiceTest extends BaseTestCase
         $payment = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment->setData('order', $order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -137,8 +136,8 @@ class InvoiceTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $payment->setData('order', $order);
 
         $this->expectException(LocalizedException::class);
         $this->classToTest->authorize($payment, 100);

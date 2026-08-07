@@ -78,9 +78,9 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getGrandTotal'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 

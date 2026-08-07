@@ -101,21 +101,18 @@ class InvoiceTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'getPayonePaymentBans',
-                'setPayonePaymentBans',
-                'unsPayoneRedirectUrl',
-                'unsPayoneRedirectedPaymentMethod',
-                'unsPayoneCanceledPaymentMethod',
-                'unsPayoneIsError',
-                'unsShowAmazonPendingNotice',
-                'unsAmazonRetryAsync',
-                'unsPayoneRatepayDeviceFingerprintToken',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $checkoutSessionData = [
+            'getPayonePaymentBans' => null,
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($quote);
-        $checkoutSession->method('getPayonePaymentBans')->willReturn(null);
 
         $this->precheckRequest = $this->getMockBuilder(PreCheck::class)->disableOriginalConstructor()->getMock();
         $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
@@ -189,9 +186,8 @@ class InvoiceTest extends BaseTestCase
         $payment = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment->setData('order', $order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -214,9 +210,8 @@ class InvoiceTest extends BaseTestCase
         $payment = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment->setData('order', $order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -241,9 +236,8 @@ class InvoiceTest extends BaseTestCase
         $payment = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment->setData('order', $order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -288,9 +282,9 @@ class InvoiceTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneRatepayShopId'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneRatepayShopId')->willReturn('12345');
+        $order->setData('payone_ratepay_shop_id', '12345');
 
         $result = $this->classToTest->getPaymentSpecificCaptureParameters($order);
         $this->assertArrayHasKey('add_paydata[shop_id]', $result);
@@ -300,9 +294,9 @@ class InvoiceTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneRatepayShopId'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneRatepayShopId')->willReturn('12345');
+        $order->setData('payone_ratepay_shop_id', '12345');
 
         $result = $this->classToTest->getPaymentSpecificDebitParameters($order);
         $this->assertArrayHasKey('add_paydata[shop_id]', $result);

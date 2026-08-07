@@ -36,7 +36,7 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\ResourceModel\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Directory\Model\Region;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -114,13 +114,11 @@ class OrderTest extends BaseTestCase
 
         $rate1 = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPrice', 'getCode'])
+            ->onlyMethods([])
             ->getMock();
         $rate2 = clone $rate1;
-        $rate1->method('getPrice')->willReturn('5.00');
-        $rate1->method('getCode')->willReturn('not_free');
-        $rate2->method('getPrice')->willReturn('0.00');
-        $rate2->method('getCode')->willReturn($expected);
+        $rate1->setData(['price' => '5.00', 'code' => 'not_free']);
+        $rate2->setData(['price' => '0.00', 'code' => $expected]);
         $rates = [
             'key' => [
                 $rate1,
@@ -150,10 +148,9 @@ class OrderTest extends BaseTestCase
     {
         $rate = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPrice', 'getCode'])
+            ->onlyMethods([])
             ->getMock();
-        $rate->method('getPrice')->willReturn('0.00');
-        $rate->method('getCode')->willReturn('free_free');
+        $rate->setData(['price' => '0.00', 'code' => 'free_free']);
         $rates = ['key' => [$rate]];
 
         $expected = 'free_free';
@@ -244,10 +241,9 @@ class OrderTest extends BaseTestCase
     {
         $rate = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPrice', 'getCode'])
+            ->onlyMethods([])
             ->getMock();
-        $rate->method('getPrice')->willReturn('0.00');
-        $rate->method('getCode')->willReturn('free_free');
+        $rate->setData(['price' => '0.00', 'code' => 'free_free']);
         $rates = ['key' => [$rate]];
 
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();

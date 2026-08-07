@@ -92,10 +92,12 @@ class RatepayTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneRatepayDeviceFingerprintToken', 'setPayoneRatepayDeviceFingerprintToken'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'context' => $context,
@@ -159,7 +161,7 @@ class RatepayTest extends BaseTestCase
 
     public function testGetRatepayDeviceFingerprintToken()
     {
-        $this->checkoutSession->method('getPayoneRatepayDeviceFingerprintToken')->willReturn(null);
+        
 
         $result = $this->classToTest->getRatepayDeviceFingerprintToken();
         $this->assertNotEmpty($result);

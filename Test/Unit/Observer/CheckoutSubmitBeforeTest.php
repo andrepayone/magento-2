@@ -88,9 +88,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getGrandTotal'])
-            ->getMock();
-        $quote->method('getGrandTotal')->willReturn(123.45);
+            ->onlyMethods([])->getMock();
+        $quote->setData('grand_total', 123.45);
 
         $result = $this->classToTest->isCreditratingNeeded($quote);
         $this->assertFalse($result);
@@ -217,8 +216,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
 
         $this->consumerscore->method('sendRequest')->willReturn(true);
 
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->addMethods(['getPayoneProtectScore'])->getMock();
-        $address->method('getPayoneProtectScore')->willReturn($expected);
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $address->setData('payone_protect_score', $expected);
 
         $result = $this->classToTest->getScoreByCreditrating($address);
         $this->assertEquals($expected, $result);
@@ -233,10 +232,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['getPayoneProtectScore', 'setPayoneProtectScore'])
             ->getMock();
-        $address->method('getPayoneProtectScore')->willReturn($expected);
-        $address->method('setPayoneProtectScore')->willReturn($address);
+        $address->setData('payone_protect_score', $expected);
 
         $result = $this->classToTest->getScoreByCreditrating($address);
         $this->assertEquals($expected, $result);
@@ -252,10 +249,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['getPayoneProtectScore', 'setPayoneProtectScore'])
             ->getMock();
-        $address->method('getPayoneProtectScore')->willReturn('G');
-        $address->method('setPayoneProtectScore')->willReturn($address);
+        $address->setData('payone_protect_score', 'G');
 
         $result = $this->classToTest->getScoreByCreditrating($address);
         $this->assertEquals($expected, $result);
@@ -280,10 +275,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['getPayoneAddresscheckScore', 'getPayoneProtectScore', 'setPayoneProtectScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn('G');
-        $address->method('setPayoneProtectScore')->willReturn($address);
+        $address->setData('payone_addresscheck_score', 'G');
 
         $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getAdditionalInformation')->willReturn(true);
@@ -300,8 +293,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getPayment')->willReturn($payment);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getQuote'])->getMock();
-        $observer->method('getQuote')->willReturn($quote);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('quote', $quote);
 
         return $observer;
     }
@@ -345,10 +338,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['getPayoneAddresscheckScore', 'getPayoneProtectScore', 'setPayoneProtectScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn('G');
-        $address->method('setPayoneProtectScore')->willReturn($address);
+        $address->setData('payone_addresscheck_score', 'G');
 
         $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getAdditionalInformation')->willReturn(false);
@@ -365,8 +356,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getPayment')->willReturn($payment);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getQuote'])->getMock();
-        $observer->method('getQuote')->willReturn($quote);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('quote', $quote);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);
@@ -374,8 +365,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
 
     public function testExecuteNoQuote()
     {
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getQuote'])->getMock();
-        $observer->method('getQuote')->willReturn(null);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('quote', null);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

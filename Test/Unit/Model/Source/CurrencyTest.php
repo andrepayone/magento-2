@@ -65,9 +65,8 @@ class CurrencyTest extends BaseTestCase
         $website = $this->getMockBuilder(Website::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBaseCurrencyCode'])
-            ->addMethods(['getDefaultCurrencyCode'])
             ->getMock();
-        $store->method('getDefaultCurrencyCode')->willReturn('EUR');
+        $store->setData('default_currency_code', 'EUR');
         $store->method('getBaseCurrencyCode')->willReturn('USD');
         
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();

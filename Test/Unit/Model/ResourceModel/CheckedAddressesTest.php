@@ -79,16 +79,17 @@ class CheckedAddressesTest extends BaseTestCase
         $this->address->method('getRegionCode')->willReturn('');
 
         $this->checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
-
-        $this->connection = $this->getMockBuilder(Select::class)
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['from', 'where'])
-            ->addMethods(['select', 'insert'])
-            ->addMethods(['fetchOne'])
             ->getMock();
-        $this->connection->method('select')->willReturn($this->connection);
-        $this->connection->method('from')->willReturn($this->connection);
-        $this->connection->method('where')->willReturn($this->connection);
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+
+        $this->connection = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->connection->method('select')->willReturn($select);
 
         $resource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $resource->method('getConnection')->willReturn($this->connection);

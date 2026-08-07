@@ -34,6 +34,7 @@ use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
 class PaymentBanTest extends BaseTestCase
@@ -56,16 +57,18 @@ class PaymentBanTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
-
-        $this->connection = $this->getMockBuilder(Select::class)
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['from', 'where', 'order'])
-            ->addMethods(['fetchAll', 'select', 'insert'])
             ->getMock();
-        $this->connection->method('select')->willReturn($this->connection);
-        $this->connection->method('from')->willReturn($this->connection);
-        $this->connection->method('where')->willReturn($this->connection);
-        $this->connection->method('order')->willReturn($this->connection);
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+        $select->method('order')->willReturn($select);
+
+        $this->connection = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->connection->method('select')->willReturn($select);
 
         $resource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $resource->method('getConnection')->willReturn($this->connection);

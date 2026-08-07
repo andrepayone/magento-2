@@ -74,6 +74,13 @@ class ReviewTest extends BaseTestCase
      */
     private $payment;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -94,10 +101,8 @@ class ReviewTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getShippingMethod'])
-            ->addMethods(['setShippingMethod'])
             ->getMock();
         $address->method('getShippingMethod')->willReturn('not_free');
-        $address->method('setShippingMethod')->willReturn($address);
 
         $shipping = $this->getMockBuilder(Shipping::class)->disableOriginalConstructor()->getMock();
 
@@ -121,10 +126,16 @@ class ReviewTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneWorkorderId'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $page = $this->getMockBuilder(Page::class)->disableOriginalConstructor()->getMock();
 
@@ -143,7 +154,7 @@ class ReviewTest extends BaseTestCase
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
         $this->payment->method('getMethod')->willReturn('payone_paypal');
 
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
@@ -155,7 +166,7 @@ class ReviewTest extends BaseTestCase
     {
         $amazonPay = $this->getMockBuilder(AmazonPayV2::class)->disableOriginalConstructor()->getMock();
         
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
         $this->payment->method('getMethod')->willReturn('payone_paypal');
         $this->payment->method('getMethodInstance')->willReturn($amazonPay);
 
@@ -175,7 +186,7 @@ class ReviewTest extends BaseTestCase
 
     public function testExecuteRedirectPayPalNoWorkorder()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $this->checkoutSessionData['getPayoneWorkorderId'] = null;
         $this->payment->method('getMethod')->willReturn('payone_paypal');
 
         $this->request->method('getBeforeForwardInfo')->willReturn(false);

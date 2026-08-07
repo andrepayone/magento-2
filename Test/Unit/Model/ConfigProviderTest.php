@@ -82,6 +82,13 @@ class ConfigProviderTest extends BaseTestCase
      */
     private $customerSession;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -113,15 +120,23 @@ class ConfigProviderTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCustomerId'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getCustomerId')->willReturn(123);
+        $quote->setData('customer_id', 123);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getPayoneUUID', 'setPayoneUUID'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $this->checkoutSessionData = [
+            'getPayoneCanceledPaymentMethod' => null,
+        ];
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $customer = $this->getMockBuilder(CustomerModel::class)
@@ -159,6 +174,7 @@ class ConfigProviderTest extends BaseTestCase
 
     public function testGetConfig()
     {
+        $this->checkoutSessionData['getPayoneCanceledPaymentMethod'] = null;
         $method = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getInstructions', 'isAvailable'])
@@ -168,7 +184,6 @@ class ConfigProviderTest extends BaseTestCase
         $this->dataHelper->method('getMethodInstance')->willReturn($method);
         $this->customerSession->method('isLoggedIn')->willReturn(false);
 
-        $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn(null);
 
         $result = $this->classToTest->getConfig();
         $this->assertNotEmpty($result);
@@ -176,9 +191,9 @@ class ConfigProviderTest extends BaseTestCase
 
     public function testGetConfigNoInstance()
     {
+        $this->checkoutSessionData['getPayoneCanceledPaymentMethod'] = 'payone_creditcard';
         $this->dataHelper->method('getMethodInstance')->willReturn(null);
 
-        $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn('payone_creditcard');
         $this->customerSession->method('isLoggedIn')->willReturn(true);
         $this->paymentHelper->method('isPaymentMethodActive')->willReturn(true);
 

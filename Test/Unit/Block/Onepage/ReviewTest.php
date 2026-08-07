@@ -223,7 +223,7 @@ class ReviewTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getData')->willReturn(['key' => 'value']);
         $result = $this->classToTest->renderAddress($address);
-        $expected = 'address'; // see setUp method
+        $expected = 'address';
         $this->assertEquals($expected, $result);
     }
 

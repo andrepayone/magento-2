@@ -132,9 +132,8 @@ class CheckoutTest extends BaseTestCase
                 'getSku',
                 'getQty',
             ])
-            ->addMethods(['getProductId'])
             ->getMock();
-        $item->method("getProductId")->willReturn($productId);
+        $item->setData('product_id', $productId);
         $item->method("getSku")->willReturn("Test12");
         $item->method("getQty")->willReturn(5);
 

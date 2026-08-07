@@ -52,10 +52,10 @@ class GetfileTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandateId', 'getPayoneMode'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneMandateId')->willReturn('12345');
-        $order->method('getPayoneMode')->willReturn('test');
+        $order->setData('payone_mandate_id', '12345');
+        $order->setData('payone_mode', 'test');
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
@@ -68,7 +68,7 @@ class GetfileTest extends BaseTestCase
         $expected = '';
         $this->assertEquals($expected, $result);
 
-        $this->expectException(Exception::class); // script wont be able to successfully contact payone-server
+        $this->expectException(Exception::class);
         $this->classToTest->sendRequest($order, $payment);
     }
 }

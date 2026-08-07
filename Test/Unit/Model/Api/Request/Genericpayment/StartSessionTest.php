@@ -88,10 +88,9 @@ class StartSessionTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBillingAddress', 'getShippingAddress'])
-            ->addMethods(['getQuoteCurrencyCode', 'getCustomerEmail'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
-        $quote->method('getCustomerEmail')->willReturn('tester@payone.de');
+        $quote->setData('quote_currency_code', 'EUR');
+        $quote->setData('customer_email', 'tester@payone.de');
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);
 

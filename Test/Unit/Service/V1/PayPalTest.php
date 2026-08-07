@@ -62,6 +62,13 @@ class PayPalTest extends BaseTestCase
 
     private $paypalExpress;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -89,13 +96,14 @@ class PayPalTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'setIsPayonePayPalExpress',
-                'setPayoneWorkorderId',
-                'setPayoneQuoteComparisonString',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->paypalExpress = $this->getMockBuilder(PayPalExpress::class)->disableOriginalConstructor()->getMock();

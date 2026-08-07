@@ -80,10 +80,9 @@ class InstallmentTest extends BaseTestCase
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('test');
-        $info->method('getOrder')->willReturn($this->order);
+        $info->setData('order', $this->order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $toolkitHelper,

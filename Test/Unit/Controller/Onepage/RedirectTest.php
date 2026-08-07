@@ -33,7 +33,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
-use Magento\Framework\App\Console\Response;
+use Magento\Framework\App\Response\Http as Response;
 use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -55,6 +55,13 @@ class RedirectTest extends BaseTestCase
      */
     private $checkoutSession;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -66,7 +73,7 @@ class RedirectTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setRedirect'])
+            ->onlyMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
@@ -78,8 +85,15 @@ class RedirectTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneRedirectUrl', 'setPayoneCustomerIsRedirected'])
+            ->onlyMethods(['__call'])
             ->getMock();
+
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
@@ -89,7 +103,7 @@ class RedirectTest extends BaseTestCase
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn('http://redirect.org');
+        $this->checkoutSessionData['getPayoneRedirectUrl'] = 'http://redirect.org';
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -97,7 +111,7 @@ class RedirectTest extends BaseTestCase
 
     public function testExecuteNoRedirectUrl()
     {
-        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn(null);
+        $this->checkoutSessionData['getPayoneRedirectUrl'] = null;
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);

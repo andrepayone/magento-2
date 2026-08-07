@@ -80,6 +80,13 @@ class InstallmentPlanTest extends BaseTestCase
      */
     private $ratepayInstallment;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -97,16 +104,20 @@ class InstallmentPlanTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBillingAddress'])
-            ->addMethods(['getBaseGrandTotal'])
             ->getMock();
-        $quote->method('getBaseGrandTotal')->willReturn(100);
+        $quote->setData('base_grand_total', 100);
         $quote->method('getBillingAddress')->willReturn($address);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['setInstallmentDraftLinks', 'setInstallmentWorkorderId'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->precheck = $this->getMockBuilder(PreCheck::class)->disableOriginalConstructor()->getMock();
@@ -117,7 +128,6 @@ class InstallmentPlanTest extends BaseTestCase
         $block = $this->getMockBuilder(InstallmentPlan::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['toHtml'])
-            ->addMethods(['setInstallmentData', 'setCode'])
             ->getMock();
         $block->method('toHtml')->willReturn('InstallmentPlanHtml');
 

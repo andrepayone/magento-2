@@ -77,9 +77,9 @@ class CreditcardV2Test extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCustomerId'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getCustomerId')->willReturn(123);
+        $quote->setData('customer_id', 123);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -175,9 +175,9 @@ class CreditcardV2Test extends BaseTestCase
 
         $data = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAdditionalData'])
+            ->onlyMethods([])
             ->getMock();
-        $data->method('getAdditionalData')->willReturn($addData);
+        $data->setData('additional_data', $addData);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('default');

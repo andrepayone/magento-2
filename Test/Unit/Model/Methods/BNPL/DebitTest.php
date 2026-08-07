@@ -67,7 +67,6 @@ class DebitTest extends BaseTestCase
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('test');
 

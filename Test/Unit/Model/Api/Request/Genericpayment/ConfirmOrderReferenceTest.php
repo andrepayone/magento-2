@@ -76,13 +76,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode', 'getGrandTotal'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -104,13 +103,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode', 'getGrandTotal'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');

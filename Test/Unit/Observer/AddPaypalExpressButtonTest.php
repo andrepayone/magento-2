@@ -90,9 +90,8 @@ class AddPaypalExpressButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getContainer'])
-            ->getMock();
-        $event->method('getContainer')->willReturn($shortcutButtons);
+            ->onlyMethods([])->getMock();
+        $event->setData('container', $shortcutButtons);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
@@ -120,9 +119,8 @@ class AddPaypalExpressButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getContainer'])
-            ->getMock();
-        $event->method('getContainer')->willReturn($shortcutButtons);
+            ->onlyMethods([])->getMock();
+        $event->setData('container', $shortcutButtons);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);

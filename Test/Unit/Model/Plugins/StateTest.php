@@ -78,11 +78,10 @@ class StateTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
-            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
-        $order->method('getIsInProcess')->willReturn(true);
+        $order->setData('is_in_process', true);
         $order->method('isCanceled')->willReturn(false);
         $order->method('canUnhold')->willReturn(false);
         $order->method('canInvoice')->willReturn(false);
@@ -116,11 +115,10 @@ class StateTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
-            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
-        $order->method('getIsInProcess')->willReturn(true);
+        $order->setData('is_in_process', true);
         $order->method('isCanceled')->willReturn(false);
         $order->method('canUnhold')->willReturn(false);
         $order->method('canInvoice')->willReturn(false);

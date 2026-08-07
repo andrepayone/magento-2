@@ -69,6 +69,13 @@ class AmazonPayV2Test extends BaseTestCase
      */
     private $authorizationRequest;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -82,10 +89,9 @@ class AmazonPayV2Test extends BaseTestCase
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('19010101');
-        $info->method('getOrder')->willReturn($order);
+        $info->setData('order', $order);
 
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('12');
@@ -94,21 +100,18 @@ class AmazonPayV2Test extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'unsPayoneRedirectUrl',
-                'unsPayoneRedirectedPaymentMethod',
-                'unsPayoneCanceledPaymentMethod',
-                'unsPayoneIsError',
-                'unsShowAmazonPendingNotice',
-                'unsAmazonRetryAsync',
-                'getPayoneIsAmazonPayExpressPayment',
-                'getPayoneWorkorderId',
-                'setPayoneAmazonPaySignature',
-                'setPayoneAmazonPayPayload',
-                'setPayoneRedirectUrl',
-                'setPayoneRedirectedPaymentMethod',
-            ])
+            ->onlyMethods(['__call'])
             ->getMock();
+        $this->checkoutSessionData = [
+            'getPayoneIsAmazonPayExpressPayment' => false,
+            'getPayoneWorkorderId' => '12345',
+        ];
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
@@ -127,14 +130,14 @@ class AmazonPayV2Test extends BaseTestCase
 
     public function testIsAPBPayment()
     {
-        $this->checkoutSession->method('getPayoneIsAmazonPayExpressPayment')->willReturn(false);
+        $this->checkoutSessionData['getPayoneIsAmazonPayExpressPayment'] = false;
 
         $this->assertTrue($this->classToTest->isAPBPayment());
     }
 
     public function testIsAPBPaymentFalse()
     {
-        $this->checkoutSession->method('getPayoneIsAmazonPayExpressPayment')->willReturn(true);
+        $this->checkoutSessionData['getPayoneIsAmazonPayExpressPayment'] = true;
 
         $this->assertFalse($this->classToTest->isAPBPayment());
     }
@@ -204,11 +207,11 @@ class AmazonPayV2Test extends BaseTestCase
 
     public function testGetPaymentSpecificParameters()
     {
+        $this->checkoutSessionData['getPayoneIsAmazonPayExpressPayment'] = false;
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getIsVirtual')->willReturn(false);
 
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
-        $this->checkoutSession->method('getPayoneIsAmazonPayExpressPayment')->willReturn(false);
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $this->assertCount(5, $result);
@@ -224,7 +227,7 @@ class AmazonPayV2Test extends BaseTestCase
 
     public function testAuthorize()
     {
-        $this->checkoutSession->method('getPayoneIsAmazonPayExpressPayment')->willReturn(false);
+        $this->checkoutSessionData['getPayoneIsAmazonPayExpressPayment'] = false;
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
@@ -236,8 +239,8 @@ class AmazonPayV2Test extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'REDIRECT', 'txid' => '12345', 'redirecturl' => 'http://testdomain.com', 'add_paydata[signature]' => 'test', 'add_paydata[payload]' => 'test'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);

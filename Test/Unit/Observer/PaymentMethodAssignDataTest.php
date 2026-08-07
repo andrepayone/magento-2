@@ -67,10 +67,10 @@ class PaymentMethodAssignDataTest extends BaseTestCase
         $observer = $this->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getData'])
-            ->addMethods(['getPaymentModel'])
             ->getMock();
-        $observer->method('getPaymentModel')->willReturn($paymentInfo);
-        $observer->method('getData')->willReturn($data);
+        $observer->method('getData')->willReturnCallback(function ($key = '') use ($data, $paymentInfo) {
+            return $key === 'payment_model' ? $paymentInfo : $data;
+        });
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

@@ -64,9 +64,9 @@ class DownloadTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPayment'])
-            ->addMethods(['getPayoneMandateId'])
             ->getMock();
-        $order->method('getPayoneMandateId')->willReturn('12345');
+
+        $order->setData('payone_mandate_id', '12345');
         $order->method('getPayment')->willReturn($payment);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();

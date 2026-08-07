@@ -66,10 +66,9 @@ class CreditmemoRegisterBeforeTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getInput', 'getCreditmemo'])
-            ->getMock();
-        $event->method('getInput')->willReturn($input);
-        $event->method('getCreditmemo')->willReturn($creditmemo);
+            ->onlyMethods([])->getMock();
+        $event->setData('input', $input);
+        $event->setData('creditmemo', $creditmemo);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);

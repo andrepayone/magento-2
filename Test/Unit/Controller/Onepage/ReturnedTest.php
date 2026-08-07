@@ -95,14 +95,8 @@ class ReturnedTest extends BaseTestCase
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getLastRealOrder',
-                'getQuote'
-            ])
-            ->addMethods([
-                'setLastRealOrderId',
-                'setLastOrderId',
-                'unsPayoneCustomerIsRedirected',
-                'setPayoneCreatingSubstituteOrder',
-                'unsPayoneCreatingSubstituteOrder',
+                'getQuote',
+                '__call',
             ])
             ->getMock();
 

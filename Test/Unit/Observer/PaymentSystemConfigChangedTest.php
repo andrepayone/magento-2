@@ -64,9 +64,8 @@ class PaymentSystemConfigChangedTest extends BaseTestCase
     {
         $observer = $this->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getChangedPaths'])
-            ->getMock();
-        $observer->method('getChangedPaths')->willReturn(['payone_payment/ratepay_invoice/ratepay_shop_config']);
+            ->onlyMethods([])->getMock();
+        $observer->setData('changed_paths', ['payone_payment/ratepay_invoice/ratepay_shop_config']);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

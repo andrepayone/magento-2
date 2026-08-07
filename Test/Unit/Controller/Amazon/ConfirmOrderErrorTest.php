@@ -85,15 +85,11 @@ class ConfirmOrderErrorTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'setIsPayoneRedirectCancellation',
-                'unsAmazonWorkorderId',
-                'unsAmazonAddressToken',
-                'unsAmazonReferenceId',
-                'unsOrderReferenceDetailsExecuted',
-                'setTriggerInvalidPayment',
-            ])
+            ->onlyMethods(['__call'])
             ->getMock();
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,

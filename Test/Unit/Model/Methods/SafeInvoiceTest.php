@@ -116,8 +116,8 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
@@ -139,8 +139,8 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);

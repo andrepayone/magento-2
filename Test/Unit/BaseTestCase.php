@@ -30,7 +30,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\App\ObjectManager as ObjectManagerReal;
 use PHPUnit\Framework\TestCase;
 
-class BaseTestCase extends TestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * @var bool
@@ -50,8 +50,6 @@ class BaseTestCase extends TestCase
             $this->mockObjectManager();
         }
 
-        // This is a version-switch -> class was added with Magento 2.2.0
-        // Couldnt find a direct way to obtain the version using only the Unittest-Objectmanager
         if (class_exists('\Magento\Framework\Serialize\Serializer\Json') === false) {
             return new PayoneObjectManager($this);
         }

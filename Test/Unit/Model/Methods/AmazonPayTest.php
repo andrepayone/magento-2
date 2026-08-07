@@ -66,6 +66,13 @@ class AmazonPayTest extends BaseTestCase
      */
     private $authorizationRequest;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -74,28 +81,21 @@ class AmazonPayTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getAmazonWorkorderId',
-                'getAmazonAddressToken',
-                'getAmazonReferenceId',
-                'getAmazonRetryAsync',
-                'setAmazonRetryAsync',
-                'unsPayoneRedirectUrl',
-                'unsPayoneRedirectedPaymentMethod',
-                'unsPayoneCanceledPaymentMethod',
-                'unsPayoneIsError',
-                'unsShowAmazonPendingNotice',
-                'unsAmazonRetryAsync',
-                'setShowAmazonPendingNotice',
-                'setPayoneRedirectUrl',
-                'setPayoneRedirectedPaymentMethod',
-                'getPayoneCreatingSubstituteOrder',
-            ])
+            ->onlyMethods(['__call'])
             ->getMock();
+        $this->checkoutSessionData = [
+            'getAmazonWorkorderId' => '12345',
+            'getAmazonAddressToken' => '12345',
+            'getAmazonReferenceId' => '12345',
+            'getAmazonRetryAsync' => true,
+        ];
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
-        $this->checkoutSession->method('getAmazonWorkorderId')->willReturn('12345');
-        $this->checkoutSession->method('getAmazonAddressToken')->willReturn('12345');
-        $this->checkoutSession->method('getAmazonReferenceId')->willReturn('12345');
 
         $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
@@ -108,7 +108,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testGetPaymentSpecificParametersSynchronousFirst()
     {
-        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
+        $this->checkoutSessionData['getAmazonRetryAsync'] = true;
         $this->shopHelper->method('getConfigParam')->willReturn('synchronousFirst');
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
@@ -119,7 +119,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testGetPaymentSpecificParametersSynchronousThenAsync()
     {
-        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(false);
+        $this->checkoutSessionData['getAmazonRetryAsync'] = false;
         $this->shopHelper->method('getConfigParam')->willReturn('synchronousFirst');
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
@@ -130,7 +130,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testGetPaymentSpecificParametersAsynchronous()
     {
-        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
+        $this->checkoutSessionData['getAmazonRetryAsync'] = true;
         $this->shopHelper->method('getConfigParam')->willReturn('asynchronous');
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
@@ -141,7 +141,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testGetPaymentSpecificParametersSynchronous()
     {
-        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
+        $this->checkoutSessionData['getAmazonRetryAsync'] = true;
         $this->shopHelper->method('getConfigParam')->willReturn('synchronous');
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
@@ -152,7 +152,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testAuthorize()
     {
-        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
+        $this->checkoutSessionData['getAmazonRetryAsync'] = true;
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
@@ -164,8 +164,8 @@ class AmazonPayTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => 980, 'customermessage' => 'test'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);

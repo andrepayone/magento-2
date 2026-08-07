@@ -103,6 +103,13 @@ class LoadReviewTest extends BaseTestCase
      */
     private $coupon;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -146,11 +153,9 @@ class LoadReviewTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getEmail', 'getShippingMethod'])
-            ->addMethods(['setShippingMethod', 'setCollectShippingRates'])
             ->getMock();
         $address->method('getEmail')->willReturn('test@test.de');
         $address->method('getShippingMethod')->willReturn('free');
-        $address->method('setShippingMethod')->willReturn($address);
 
         $shipping = $this->getMockBuilder(ShippingInterface::class)->disableOriginalConstructor()->getMock();
         $shipping->method('setMethod')->willReturn($shipping);
@@ -179,50 +184,32 @@ class LoadReviewTest extends BaseTestCase
                 'getItemsCount',
                 'setCustomerIsGuest',
             ])
-            ->addMethods([
-                'setCustomerId',
-                'setCustomerEmail',
-                'setCustomerGroupId',
-                'getCouponCode',
-                'setCouponCode',
-            ])
             ->getMock();
         $this->quote->method('getPayment')->willReturn($payment);
         $this->quote->method('collectTotals')->willReturn($this->quote);
-        $this->quote->method('setCustomerId')->willReturn($this->quote);
-        $this->quote->method('setCustomerEmail')->willReturn($this->quote);
         $this->quote->method('setCustomerIsGuest')->willReturn($this->quote);
-        $this->quote->method('setCustomerGroupId')->willReturn($this->quote);
         $this->quote->method('getBillingAddress')->willReturn($address);
         $this->quote->method('getShippingAddress')->willReturn($address);
         $this->quote->method('setIsActive')->willReturn($this->quote);
         $this->quote->method('getIsVirtual')->willReturn(false);
         $this->quote->method('getExtensionAttributes')->willReturn($extensionAttributes);
-        $this->quote->method('setCouponCode')->willReturn($this->quote);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'getAmazonWorkorderId',
-                'setAmazonWorkorderId',
-                'unsAmazonWorkorderId',
-                'getAmazonAddressToken',
-                'setAmazonAddressToken',
-                'unsAmazonAddressToken',
-                'getAmazonReferenceId',
-                'setAmazonReferenceId',
-                'unsAmazonReferenceId',
-                'getOrderReferenceDetailsExecuted',
-                'setOrderReferenceDetailsExecuted',
-                'unsOrderReferenceDetailsExecuted',
-                'setTriggerInvalidPayment',
-                'unsTriggerInvalidPayment',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
-        $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);
         $checkoutSession->method('getQuote')->willReturn($this->quote);
-        $checkoutSession->method('getOrderReferenceDetailsExecuted')->willReturn(false);
+
+        $this->checkoutSessionData = [
+            'getAmazonWorkorderId' => null,
+            'getOrderReferenceDetailsExecuted' => false,
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
 
         $responseGetConfiguration = [
             'status' => 'OK',
@@ -384,7 +371,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(5);
 
         $result = $this->classToTest->execute();
@@ -398,7 +385,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '123456789012345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567897123456789812345678991234567890123456789112345678921234567893123456789412345678951234567896123456789712345678981234567899'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $result = $this->classToTest->execute();
@@ -412,7 +399,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, ''],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('');
+        $this->quote->setData('coupon_code', '');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $result = $this->classToTest->execute();
@@ -426,7 +413,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $this->coupon->method('getId')->willReturn('123');
@@ -442,7 +429,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $this->coupon->method('getId')->willReturn(false);
@@ -458,7 +445,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $exception = new LocalizedException(__('Error'));
@@ -475,7 +462,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->setData('coupon_code', '12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $exception = new \Exception('Error');
@@ -492,7 +479,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, '12345'],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('123');
+        $this->quote->setData('coupon_code', '123');
         $this->quote->method('getItemsCount')->willReturn(5);
 
         $result = $this->classToTest->execute();
@@ -506,7 +493,7 @@ class LoadReviewTest extends BaseTestCase
             ['remove', null, null],
             ['couponCode', null, null],
         ]);
-        $this->quote->method('getCouponCode')->willReturn('123');
+        $this->quote->setData('coupon_code', '123');
         $this->quote->method('getItemsCount')->willReturn(5);
 
         $result = $this->classToTest->execute();

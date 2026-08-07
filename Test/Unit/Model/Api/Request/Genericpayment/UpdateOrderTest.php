@@ -70,10 +70,10 @@ class UpdateOrderTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('grand_total', 123);
+        $quote->setData('quote_currency_code', 'EUR');
 
         $payment = $this->getMockBuilder(PaypalV2::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');

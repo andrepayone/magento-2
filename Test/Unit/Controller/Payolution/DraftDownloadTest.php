@@ -61,8 +61,10 @@ class DraftDownloadTest extends BaseTestCase
 
         $aLinks = ['5' => 'http://drafturl.com'];
 
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->addMethods(['getInstallmentDraftLinks'])->getMock();
-        $checkoutSession->method('getInstallmentDraftLinks')->willReturn($aLinks);
+        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->onlyMethods(['__call'])->getMock();
+        $checkoutSession->method('__call')->willReturnMap([
+            ['getInstallmentDraftLinks', [], $aLinks],
+        ]);
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
 

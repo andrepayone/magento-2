@@ -245,9 +245,9 @@ class ToolkitTest extends BaseTestCase
 
         $dataObject = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAdditionalData'])
+            ->onlyMethods([])
             ->getMock();
-        $dataObject->method('getAdditionalData')->willReturn(['key' => $expected]);
+        $dataObject->setData('additional_data', ['key' => $expected]);
 
         $this->shopHelper->method('getMagentoVersion')->willReturn('2.1.3');
 

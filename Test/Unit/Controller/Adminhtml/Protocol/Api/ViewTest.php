@@ -30,7 +30,7 @@ use Payone\Core\Controller\Adminhtml\Protocol\Api\View as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\View\Result\Page;
+use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\AuthorizationInterface;
@@ -71,8 +71,7 @@ class ViewTest extends BaseTestCase
 
         $page = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getConfig'])
-            ->addMethods(['setActiveMenu'])
+            ->onlyMethods(['getConfig', 'setActiveMenu'])
             ->getMock();
         $page->method('getConfig')->willReturn($config);
 
