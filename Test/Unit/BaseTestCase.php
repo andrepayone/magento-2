@@ -27,9 +27,11 @@
 namespace Payone\Core\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\ObjectManager as ObjectManagerReal;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 abstract class BaseTestCase extends TestCase
 {
     /**

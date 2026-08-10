@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Observer;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\CheckoutSubmitBefore as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Consumerscore;
 use Payone\Core\Helper\Consumerscore as ConsumerscoreHelper;
 use Magento\Quote\Model\Quote;
@@ -43,6 +44,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\Risk\Addresscheck;
 
+#[AllowMockObjectsWithoutExpectations]
 class CheckoutSubmitBeforeTest extends BaseTestCase
 {
     /**

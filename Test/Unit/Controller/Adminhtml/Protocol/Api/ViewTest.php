@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Adminhtml\Protocol\Api;
 
 use Payone\Core\Controller\Adminhtml\Protocol\Api\View as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Backend\Model\View\Result\Page;
@@ -38,6 +39,7 @@ use Magento\Framework\App\RequestInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ViewTest extends BaseTestCase
 {
     /**

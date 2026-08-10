@@ -30,6 +30,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\SafeInvoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
@@ -41,6 +42,7 @@ use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Payment\Model\Info;
 use Magento\Sales\Model\Order\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class SafeInvoiceTest extends BaseTestCase
 {
     /**

@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Order\Creditmemo;
 
 use Payone\Core\Block\Adminhtml\Order\Creditmemo\SepaData as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -36,6 +37,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class SepaDataTest extends BaseTestCase
 {
     /**

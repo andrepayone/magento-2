@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 use Payone\Core\Model\Plugins\ShippingInformationManagement as ClassToTest;
 use Magento\Checkout\Model\ShippingInformationManagement;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Model\Quote;
@@ -39,6 +40,7 @@ use Payone\Core\Helper\Addresscheck as AddresscheckHelper;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Quote\Api\Data\AddressExtension;
 
+#[AllowMockObjectsWithoutExpectations]
 class ShippingInformationManagementTest extends BaseTestCase
 {
     /**

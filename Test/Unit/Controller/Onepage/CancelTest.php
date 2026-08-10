@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Cancel as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Controller\ResultFactory;
@@ -44,6 +45,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class CancelTest extends BaseTestCase
 {
     /**

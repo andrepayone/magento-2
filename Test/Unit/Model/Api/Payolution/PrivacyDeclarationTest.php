@@ -28,12 +28,13 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Api\Payolution\PrivacyDeclaration as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\HTTP\Client\Curl;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\App\Cache;
 
+#[AllowMockObjectsWithoutExpectations]
 class PrivacyDeclarationTest extends BaseTestCase
 {
     /**

@@ -28,11 +28,10 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Ratepay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Helper\Shop;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Genericpayment\Profile;
 use Payone\Core\Model\ResourceModel\RatepayProfileConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
@@ -41,6 +40,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Api\Data\CustomerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayTest extends BaseTestCase
 {
     /**

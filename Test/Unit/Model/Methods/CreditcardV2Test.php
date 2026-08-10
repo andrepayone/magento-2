@@ -31,6 +31,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\CreditcardV2 as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 
+#[AllowMockObjectsWithoutExpectations]
 class CreditcardV2Test extends BaseTestCase
 {
     /**

@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Source;
 
 use Payone\Core\Model\Source\Currency as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
@@ -36,6 +37,7 @@ use Magento\Store\Model\Website;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class CurrencyTest extends BaseTestCase
 {
     /**

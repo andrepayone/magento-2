@@ -29,11 +29,13 @@ namespace Payone\Core\Test\Unit\Model\Api\Request;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Getfile as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\PayoneMethod;
 use PHPUnit\Framework\Exception;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class GetfileTest extends BaseTestCase
 {
     /**

@@ -30,6 +30,7 @@ use Magento\Store\Model\Store;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Checkout\Model\Session;
@@ -41,6 +42,7 @@ use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DebitTest extends BaseTestCase
 {
     /**

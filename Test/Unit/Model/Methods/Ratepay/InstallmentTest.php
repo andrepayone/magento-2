@@ -33,11 +33,13 @@ use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Model\Methods\Ratepay\Installment as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallmentTest extends BaseTestCase
 {
     /**

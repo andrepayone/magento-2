@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Amazon;
 
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Amazon\ConfirmOrderError as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Controller\ResultFactory;
@@ -42,6 +43,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConfirmOrderErrorTest extends BaseTestCase
 {
     /**

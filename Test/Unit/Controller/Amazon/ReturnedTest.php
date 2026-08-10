@@ -4,6 +4,7 @@ namespace Payone\Core\Test\Unit\Controller\Amazon;
 
 use Payone\Core\Controller\Amazon\Returned as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Checkout\Model\Session;
@@ -21,6 +22,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReturnedTest extends BaseTestCase
 {
     /**

@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 
 use Payone\Core\Observer\Transactionstatus\Appointed as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
@@ -41,6 +42,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 
+#[AllowMockObjectsWithoutExpectations]
 class AppointedTest extends BaseTestCase
 {
     /**

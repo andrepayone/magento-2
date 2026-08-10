@@ -28,11 +28,13 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 
 use Payone\Core\Model\Plugins\WebapiErrorProcessor as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Webapi\ErrorProcessor;
 use Payone\Core\Model\Exception\FilterMethodListException;
 
+#[AllowMockObjectsWithoutExpectations]
 class WebapiErrorProcessorTest extends BaseTestCase
 {
     /**

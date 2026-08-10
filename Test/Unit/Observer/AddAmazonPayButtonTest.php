@@ -30,6 +30,7 @@ use Magento\Catalog\Block\ShortcutButtons;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Helper\Payment;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AddAmazonPayButtonTest extends BaseTestCase
 {
     /**

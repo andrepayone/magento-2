@@ -29,12 +29,14 @@ namespace Payone\Core\Test\Unit\Block\Info;
 use Magento\Sales\Model\Order;
 use Payone\Core\Block\Info\Creditcard as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CreditcardTest extends BaseTestCase
 {
     /**

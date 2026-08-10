@@ -31,12 +31,14 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Service\V1\ClickToPay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Service\V1\Data\ClickToPayResponse;
 use Payone\Core\Api\Data\ClickToPayResponseInterfaceFactory;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ClickToPayTest extends BaseTestCase
 {
     /**

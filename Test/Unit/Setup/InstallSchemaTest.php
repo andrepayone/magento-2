@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Setup;
 
 use Payone\Core\Setup\InstallSchema as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -35,6 +36,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallSchemaTest extends BaseTestCase
 {
     /**

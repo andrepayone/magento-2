@@ -28,12 +28,14 @@ namespace Payone\Core\Test\Unit\Block\Amazon;
 
 use Payone\Core\Block\Amazon\Button as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Base;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class ButtonTest extends BaseTestCase
 {
     /**

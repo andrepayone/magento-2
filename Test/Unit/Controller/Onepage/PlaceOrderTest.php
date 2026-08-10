@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\PlaceOrder as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Api\AgreementsValidatorInterface;
@@ -45,6 +46,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Helper\Checkout;
 
+#[AllowMockObjectsWithoutExpectations]
 class PlaceOrderTest extends BaseTestCase
 {
     /**

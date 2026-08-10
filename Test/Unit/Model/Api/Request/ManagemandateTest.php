@@ -31,6 +31,7 @@ use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Api\Request\Managemandate as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
@@ -39,6 +40,7 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ManagemandateTest extends BaseTestCase
 {
     /**

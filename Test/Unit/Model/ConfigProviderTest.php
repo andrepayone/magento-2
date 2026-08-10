@@ -30,6 +30,7 @@ use Magento\Quote\Model\Quote;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ConfigProvider as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Helper\Data;
 use Payone\Core\Helper\Country;
 use Payone\Core\Helper\Customer;
@@ -50,6 +51,7 @@ use Magento\Customer\Model\Customer as CustomerModel;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Model\Methods\Ratepay\Installment;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConfigProviderTest extends BaseTestCase
 {
     /**

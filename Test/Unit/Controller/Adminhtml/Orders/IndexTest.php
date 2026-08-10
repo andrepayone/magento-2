@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Adminhtml\Orders;
 
 use Payone\Core\Controller\Adminhtml\Orders\Index as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Backend\Model\View\Result\Page;
@@ -37,6 +38,7 @@ use Magento\Framework\AuthorizationInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends BaseTestCase
 {
     /**

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 use Payone\Core\Model\Plugins\GuestPaymentInformationManagement as ClassToTest;
 use Magento\Checkout\Model\GuestPaymentInformationManagement as GuestPaymentInformationManagementOrig;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -37,6 +38,7 @@ use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\GuestCartManagementInterface;
 use Magento\Framework\Exception\LocalizedException;
 
+#[AllowMockObjectsWithoutExpectations]
 class GuestPaymentInformationManagementTest extends BaseTestCase
 {
     /**

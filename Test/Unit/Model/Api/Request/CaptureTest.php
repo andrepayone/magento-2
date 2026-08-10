@@ -31,6 +31,7 @@ use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Api\Request\Capture as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
@@ -42,6 +43,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Item as InvoiceItem;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 
+#[AllowMockObjectsWithoutExpectations]
 class CaptureTest extends BaseTestCase
 {
     /**

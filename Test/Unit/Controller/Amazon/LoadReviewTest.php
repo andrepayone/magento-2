@@ -30,6 +30,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Amazon\LoadReview as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Exception\AuthorizationException;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -61,6 +62,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\SalesRule\Model\CouponFactory;
 use Magento\SalesRule\Model\Coupon;
 
+#[AllowMockObjectsWithoutExpectations]
 class LoadReviewTest extends BaseTestCase
 {
     /**

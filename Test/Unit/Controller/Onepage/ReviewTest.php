@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Review as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Request\Http;
@@ -41,12 +42,12 @@ use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\Shipping;
 use Payone\Core\Model\Methods\AmazonPayV2;
-use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Model\Api\Request\Genericpayment\UpdateCheckoutSession;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReviewTest extends BaseTestCase
 {
     /**

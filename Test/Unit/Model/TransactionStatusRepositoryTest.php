@@ -28,12 +28,14 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 
 use Payone\Core\Model\TransactionStatusRepository as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\ResourceModel\TransactionStatus as ResourceModel;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class TransactionStatusRepositoryTest extends BaseTestCase
 {
     /**

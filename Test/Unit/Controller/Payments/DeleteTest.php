@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Payments;
 
 use Payone\Core\Controller\Payments\Delete as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Action\Context;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -36,6 +37,7 @@ use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Customer\Model\Session;
 
+#[AllowMockObjectsWithoutExpectations]
 class DeleteTest extends BaseTestCase
 {
     /**

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Onepage;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Block\Onepage\Review as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Address\Config;
 use Magento\Framework\DataObject;
@@ -55,10 +56,10 @@ use Magento\Framework\View\Element\Template\File\Validator;
 use Magento\Framework\View\TemplateEnginePool;
 use Magento\Framework\View\TemplateEngineInterface;
 use Payone\Core\Helper\Shop;
-use Payone\Core\Helper\Database;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Framework\View\Asset\File;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReviewTest extends BaseTestCase
 {
     /**

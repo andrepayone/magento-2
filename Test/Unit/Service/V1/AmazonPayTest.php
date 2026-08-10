@@ -31,6 +31,7 @@ use Payone\Core\Helper\Checkout;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\AmazonPay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Payone\Core\Service\V1\Data\EditAddressResponse;
@@ -52,6 +53,7 @@ use Magento\Framework\App\ViewInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Element\BlockInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonPayTest extends BaseTestCase
 {
     /**

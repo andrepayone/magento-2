@@ -28,9 +28,11 @@ namespace Payone\Core\Test\Unit\Model\Source;
 
 use Payone\Core\Model\Source\ApplePayTypes as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApplePayTypesTest extends BaseTestCase
 {
     /**

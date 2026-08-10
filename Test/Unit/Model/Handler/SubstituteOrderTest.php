@@ -30,6 +30,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Handler\SubstituteOrder as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\QuoteRepository;
@@ -40,6 +41,7 @@ use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\Entities\TransactionStatus;
 
+#[AllowMockObjectsWithoutExpectations]
 class SubstituteOrderTest extends BaseTestCase
 {
     /**

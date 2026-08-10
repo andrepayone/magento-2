@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Block\Amazon;
 
 use Payone\Core\Block\Amazon\ButtonV2 as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Model\Methods\AmazonPayV2;
 use Magento\Checkout\Model\Session;
@@ -39,6 +40,7 @@ use Payone\Core\Helper\Base;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class ButtonV2Test extends BaseTestCase
 {
     /**

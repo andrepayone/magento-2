@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Base;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\App\State;
 
+#[AllowMockObjectsWithoutExpectations]
 class BaseTest extends BaseTestCase
 {
     /**

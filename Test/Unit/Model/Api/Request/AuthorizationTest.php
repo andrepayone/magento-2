@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Api\Request\Authorization as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\BNPL\Debit;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Helper\Api;
@@ -45,6 +46,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AuthorizationTest extends BaseTestCase
 {
     /**

@@ -31,6 +31,7 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Api\Request\Consumerscore as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
@@ -39,6 +40,7 @@ use Payone\Core\Model\Source\CreditratingCheckType;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConsumerscoreTest extends BaseTestCase
 {
     /**

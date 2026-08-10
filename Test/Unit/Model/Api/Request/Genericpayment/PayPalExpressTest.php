@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
@@ -36,6 +37,7 @@ use Payone\Core\Model\Methods\PaypalV2;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PayPalExpressTest extends BaseTestCase
 {
     /**

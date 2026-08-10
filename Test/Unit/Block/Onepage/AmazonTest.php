@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Block\Onepage\Amazon as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
@@ -38,6 +39,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonTest extends BaseTestCase
 {
     /**

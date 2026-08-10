@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\ResourceModel;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Model\ResourceModel\SavedPaymentData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -36,6 +37,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
+#[AllowMockObjectsWithoutExpectations]
 class SavedPaymentDataTest extends BaseTestCase
 {
     /**

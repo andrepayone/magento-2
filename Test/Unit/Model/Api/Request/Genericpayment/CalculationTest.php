@@ -28,14 +28,15 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CalculationTest extends BaseTestCase
 {
     /**

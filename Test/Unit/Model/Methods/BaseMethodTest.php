@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\Paypal as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Model\PayoneConfig;
@@ -47,6 +48,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
 use Magento\Framework\Registry;
 
+#[AllowMockObjectsWithoutExpectations]
 class BaseMethodTest extends BaseTestCase
 {
     /**

@@ -33,6 +33,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Ratepay\Invoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Checkout\Model\Session;
@@ -47,6 +48,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class InvoiceTest extends BaseTestCase
 {
     /**

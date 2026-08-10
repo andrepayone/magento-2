@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\MethodList as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\MethodList;
 use Payone\Core\Model\Api\Request\Consumerscore;
 use Payone\Core\Helper\Consumerscore as ConsumerscoreHelper;
@@ -41,6 +42,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\ResourceModel\PaymentBan;
 use Payone\Core\Model\Risk\Addresscheck;
 
+#[AllowMockObjectsWithoutExpectations]
 class MethodListTest extends BaseTestCase
 {
     /**

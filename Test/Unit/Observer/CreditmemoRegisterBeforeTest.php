@@ -30,12 +30,14 @@ use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order\Creditmemo;
 use Payone\Core\Observer\CreditmemoRegisterBefore as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event;
 use Magento\Payment\Model\Info;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CreditmemoRegisterBeforeTest extends BaseTestCase
 {
     /**

@@ -30,6 +30,7 @@ use Magento\Payment\Model\Info;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Helper\Api;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
@@ -43,6 +44,7 @@ use Payone\Core\Helper\Connection\Fsockopen;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApiTest extends BaseTestCase
 {
     /**

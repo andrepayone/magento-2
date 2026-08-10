@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Block\Amazon;
 
 use Payone\Core\Block\Amazon\Scripts as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -36,6 +37,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class ScriptsTest extends BaseTestCase
 {
     /**

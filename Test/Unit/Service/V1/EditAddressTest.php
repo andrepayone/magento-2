@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Service\V1\Data;
 
 use Payone\Core\Service\V1\EditAddress as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Payone\Core\Service\V1\Data\EditAddressResponse;
@@ -37,6 +38,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Customer\Model\Address;
 use Magento\Customer\Api\Data\AddressInterface as CustomerAddressInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class EditAddressTest extends BaseTestCase
 {
     /**

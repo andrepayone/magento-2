@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\ResourceModel;
 
 use Payone\Core\Model\ResourceModel\PaymentBan as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Shop;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Framework\Model\ResourceModel\Db\Context;
@@ -37,6 +38,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
+#[AllowMockObjectsWithoutExpectations]
 class PaymentBanTest extends BaseTestCase
 {
     /**

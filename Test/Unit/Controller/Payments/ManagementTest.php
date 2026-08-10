@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Payments;
 
 use Payone\Core\Controller\Payments\Management as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\RequestInterface;
 use \Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\App\Action\Context;
@@ -42,6 +43,7 @@ use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 
+#[AllowMockObjectsWithoutExpectations]
 class ManagementTest extends BaseTestCase
 {
     /**

@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Transactionstatus;
 
 use Payone\Core\Controller\Transactionstatus\Index as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Action\Context;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Environment;
@@ -42,6 +43,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\Handler\SubstituteOrder;
 
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends BaseTestCase
 {
     /**

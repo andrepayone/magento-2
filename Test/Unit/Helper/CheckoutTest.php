@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Checkout;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Session;
@@ -35,6 +36,7 @@ use Magento\Checkout\Helper\Data;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CheckoutTest extends BaseTestCase
 {
     /**

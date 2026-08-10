@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Setup;
 
 use Payone\Core\Setup\UpgradeData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Customer\Setup\CustomerSetupFactory;
@@ -41,6 +42,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class UpgradeDataTest extends BaseTestCase
 {
     /**

@@ -30,6 +30,7 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\InstallmentPlan as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse;
 use Payone\Core\Api\Data\InstallmentPlanResponseInterfaceFactory;
 use Magento\Checkout\Model\Session;
@@ -43,6 +44,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Model\Methods\Ratepay\Installment;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallmentPlanTest extends BaseTestCase
 {
     /**

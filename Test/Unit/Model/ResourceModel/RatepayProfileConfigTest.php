@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\ResourceModel;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\ResourceModel\RatepayProfileConfig as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -36,6 +37,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\DB\Select;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayProfileConfigTest extends BaseTestCase
 {
     /**

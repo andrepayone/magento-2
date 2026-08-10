@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Api;
 
 use Payone\Core\Model\Api\Invoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\AmastyGiftcard;
 use Payone\Core\Model\Api\Request\Authorization;
@@ -38,6 +39,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
 
+#[AllowMockObjectsWithoutExpectations]
 class InvoiceTest extends BaseTestCase
 {
     /**

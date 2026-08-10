@@ -39,8 +39,10 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class GenerateGiftCardAccountsInvoiceTest extends TestCase
 {
     /**

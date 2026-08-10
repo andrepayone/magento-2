@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Mandate;
 
 use Payone\Core\Controller\Mandate\Download as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Getfile;
 use Payone\Core\Helper\Payment;
@@ -40,6 +41,7 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DownloadTest extends BaseTestCase
 {
     /**

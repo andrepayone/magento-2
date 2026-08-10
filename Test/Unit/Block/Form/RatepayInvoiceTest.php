@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Block\Form;
 
 use Payone\Core\Block\Form\RatepayInvoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Ratepay;
@@ -36,6 +37,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Customer\Model\Data\Customer;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayInvoiceTest extends BaseTestCase
 {
     /**

@@ -30,11 +30,13 @@ use Magento\Framework\DataObject;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Observer\PaymentSystemConfigChanged as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Payment\Model\Info;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PaymentSystemConfigChangedTest extends BaseTestCase
 {
     /**

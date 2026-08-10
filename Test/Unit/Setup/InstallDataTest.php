@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Setup;
 
 use Payone\Core\Setup\InstallData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -37,6 +38,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallDataTest extends BaseTestCase
 {
     /**

@@ -28,10 +28,11 @@ namespace Payone\Core\Test\Unit\Model\Config\Backend;
 
 use Payone\Core\Model\Config\Backend\SerializedOrJson as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-
+#[AllowMockObjectsWithoutExpectations]
 class SerializedOrJsonTest extends BaseTestCase
 {
     /**

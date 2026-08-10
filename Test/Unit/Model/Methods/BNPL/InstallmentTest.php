@@ -30,6 +30,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\BNPL\Installment as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\InfoInterface;
@@ -39,6 +40,7 @@ use Magento\Store\Model\Store;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallmentTest extends BaseTestCase
 {
     /**

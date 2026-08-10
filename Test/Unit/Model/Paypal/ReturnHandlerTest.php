@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Paypal;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Paypal\ReturnHandler as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress;
 use Payone\Core\Helper\Order;
@@ -42,6 +43,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Payment\Helper\Data;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReturnHandlerTest extends BaseTestCase
 {
     /**

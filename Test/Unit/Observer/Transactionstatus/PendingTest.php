@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\Transactionstatus\Pending as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
@@ -36,6 +37,7 @@ use Payone\Core\Helper\Mail;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PendingTest extends BaseTestCase
 {
     /**

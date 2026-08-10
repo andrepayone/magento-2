@@ -30,6 +30,7 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Updateuser as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Customer;
@@ -37,6 +38,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class UpdateuserTest extends BaseTestCase
 {
     /**

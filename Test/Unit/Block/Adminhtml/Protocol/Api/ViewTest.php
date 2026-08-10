@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Protocol\Api;
 
 use Payone\Core\Block\Adminhtml\Protocol\Api\View as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Entities\ApiLogFactory;
 use Payone\Core\Model\Entities\ApiLog;
@@ -37,6 +38,7 @@ use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ViewTest extends BaseTestCase
 {
     /**

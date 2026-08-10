@@ -29,11 +29,12 @@ namespace Payone\Core\Test\Unit\Observer;
 use Payone\Core\Model\Handler\Cancellation;
 use Payone\Core\Observer\CancelOrder as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-
+#[AllowMockObjectsWithoutExpectations]
 class CancelOrderTest extends BaseTestCase
 {
     /**

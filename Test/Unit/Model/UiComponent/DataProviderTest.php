@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\UiComponent;
 
 use Payone\Core\Model\UiComponent\DataProvider as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Filter;
@@ -35,6 +36,7 @@ use Payone\Core\Helper\Database;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DataProviderTest extends BaseTestCase
 {
     /**

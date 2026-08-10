@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Risk;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Risk\Addresscheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Addresscheck;
 use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Toolkit;
@@ -40,6 +41,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Api\CartRepositoryInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AddresscheckTest extends BaseTestCase
 {
     /**

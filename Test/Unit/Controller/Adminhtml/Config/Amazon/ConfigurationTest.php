@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Adminhtml\Config\Amazon;
 
 use Payone\Core\Controller\Adminhtml\Config\Amazon\Configuration as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Backend\App\Action\Context;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -36,6 +37,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\AuthorizationInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConfigurationTest extends BaseTestCase
 {
     /**

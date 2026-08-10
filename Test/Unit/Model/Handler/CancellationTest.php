@@ -30,6 +30,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Handler\Cancellation as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
@@ -38,6 +39,7 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\ResourceModel\TransactionStatus;
 
+#[AllowMockObjectsWithoutExpectations]
 class CancellationTest extends BaseTestCase
 {
     /**
