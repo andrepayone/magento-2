@@ -239,6 +239,7 @@ class CustomerTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getGenders
      * @param int $gender
      * @param string $expected
      */
@@ -262,6 +263,7 @@ class CustomerTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getSalutations
      * @param int $gender
      * @param string $expected
      */

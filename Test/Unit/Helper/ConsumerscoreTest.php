@@ -220,6 +220,7 @@ class ConsumerscoreTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getScoreArrays
      * @param array $scores
      * @param string $expected
      */
