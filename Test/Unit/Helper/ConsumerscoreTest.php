@@ -91,6 +91,7 @@ class ConsumerscoreTest extends BaseTestCase
         $expected = 5;
         $this->databaseHelper->method('getConfigParamWithoutCache')->willReturn($expected);
         $result = $this->consumerscore->getConsumerscoreSampleCounter();
+        
         $this->assertEquals($expected, $result);
     }
 
