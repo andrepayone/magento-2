@@ -36,7 +36,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
 use Magento\Quote\Model\Quote\Address;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -224,7 +224,7 @@ class ConsumerscoreTest extends BaseTestCase
      * @param array $scores
      * @param string $expected
      */
-    #[DataProvider('getScoreArrays')]
+    #[DataProviderAttribute('getScoreArrays')]
     public function testGetWorstScore($scores, $expected)
     {
         $result = $this->consumerscore->getWorstScore($scores);

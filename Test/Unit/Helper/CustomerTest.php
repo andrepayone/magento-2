@@ -39,7 +39,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -243,7 +243,7 @@ class CustomerTest extends BaseTestCase
      * @param int $gender
      * @param string $expected
      */
-    #[DataProvider('getGenders')]
+    #[DataProviderAttribute('getGenders')]
     public function testGetGenderParameter($gender, $expected)
     {
         $result = $this->customer->getGenderParameter($gender);
@@ -267,7 +267,7 @@ class CustomerTest extends BaseTestCase
      * @param int $gender
      * @param string $expected
      */
-    #[DataProvider('getSalutations')]
+    #[DataProviderAttribute('getSalutations')]
     public function testGetSalutationParameter($gender, $expected)
     {
         $result = $this->customer->getSalutationParameter($gender);
