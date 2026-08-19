@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Block\Onepage\Amazon as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
@@ -38,6 +39,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonTest extends BaseTestCase
 {
     /**
@@ -86,8 +88,7 @@ class AmazonTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
@@ -189,7 +190,7 @@ class AmazonTest extends BaseTestCase
     public function testGetOrderReferenceId()
     {
         $expected = '12345';
-        $this->checkoutSession->method('getAmazonReferenceId')->willReturn($expected);
+        $this->checkoutSession->method('__call')->with('getAmazonReferenceId')->willReturn($expected);
 
         $result = $this->classToTest->getOrderReferenceId();
         $this->assertEquals($expected, $result);
@@ -197,7 +198,7 @@ class AmazonTest extends BaseTestCase
 
     public function testTriggerInvalidPayment()
     {
-        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(null);
+        $this->checkoutSession->method('__call')->with('getTriggerInvalidPayment')->willReturn(null);
 
         $result = $this->classToTest->triggerInvalidPayment();
         $this->assertFalse($result);
@@ -205,7 +206,7 @@ class AmazonTest extends BaseTestCase
 
     public function testTriggerInvalidPaymentTrue()
     {
-        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(['a']);
+        $this->checkoutSession->method('__call')->with('getTriggerInvalidPayment')->willReturn(['a']);
 
         $result = $this->classToTest->triggerInvalidPayment();
         $this->assertTrue($result);

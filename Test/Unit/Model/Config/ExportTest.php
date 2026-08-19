@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Config;
 
 use Payone\Core\Model\Config\Export as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\ConfigExport;
 use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Helper\Payment;
@@ -38,7 +39,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-
+#[AllowMockObjectsWithoutExpectations]
 class ExportTest extends BaseTestCase
 {
     /**

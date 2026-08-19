@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Block;
 
 use Payone\Core\Block\RedirectReturn as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
@@ -35,6 +36,7 @@ use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class RedirectReturnTest extends BaseTestCase
 {
     /**
@@ -58,8 +60,7 @@ class RedirectReturnTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
@@ -69,7 +70,10 @@ class RedirectReturnTest extends BaseTestCase
 
     public function testIsRedirectCancellation()
     {
-        $this->checkoutSession->method('getIsPayoneRedirectCancellation')->willReturn(true);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getIsPayoneRedirectCancellation', [], true],
+            ['unsIsPayoneRedirectCancellation', [], null],
+        ]);
 
         $result = $this->classToTest->isRedirectCancellation();
         $this->assertTrue($result);
@@ -77,7 +81,9 @@ class RedirectReturnTest extends BaseTestCase
 
     public function testIsNotRedirectCancellation()
     {
-        $this->checkoutSession->method('getIsPayoneRedirectCancellation')->willReturn(false);
+        $this->checkoutSession->method('__call')->willReturnMap([
+            ['getIsPayoneRedirectCancellation', [], false],
+        ]);
 
         $result = $this->classToTest->isRedirectCancellation();
         $this->assertFalse($result);

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Cancel as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Controller\ResultFactory;
@@ -44,6 +45,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\App\RequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class CancelTest extends BaseTestCase
 {
     /**
@@ -65,6 +67,13 @@ class CancelTest extends BaseTestCase
      * @var Order|\PHPUnit_Framework_MockObject_MockObject
      */
     private $order;
+
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
 
     protected function setUp(): void
     {
@@ -99,28 +108,21 @@ class CancelTest extends BaseTestCase
                 'setLoadInactive',
                 'replaceQuote',
                 'restoreQuote',
-            ])
-            ->addMethods([
-                'setIsPayoneRedirectCancellation',
-                'getLastOrderId',
-                'unsLastQuoteId',
-                'unsLastSuccessQuoteId',
-                'unsLastOrderId',
-                'unsLastRealOrderId',
-                'getPayoneRedirectedPaymentMethod',
-                'setPayoneCanceledPaymentMethod',
-                'setPayoneIsError',
-                'unsPayoneWorkorderId',
-                'unsIsPayonePayPalExpress',
-                'getPayoneWorkorderId',
+                '__call',
             ])
             ->getMock();
-        $this->checkoutSession->method('getLastOrderId')->willReturn('12345');
         $this->checkoutSession->method('getQuote')->willReturn($quote);
-        $this->checkoutSession->method('unsLastQuoteId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('unsLastSuccessQuoteId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('unsLastOrderId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('getPayoneRedirectedPaymentMethod')->willReturn('payone_creditcard');
+
+        $this->checkoutSessionData = [
+            'getLastOrderId' => '12345',
+            'getPayoneRedirectedPaymentMethod' => 'payone_creditcard',
+        ];
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $this->order->method('load')->willReturn($this->order);
@@ -147,14 +149,14 @@ class CancelTest extends BaseTestCase
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $this->checkoutSessionData['getPayoneWorkorderId'] = null;
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);
     }
 
     public function testExecutePayPalExpress()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSessionData['getPayoneWorkorderId'] = '12345';
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);
     }

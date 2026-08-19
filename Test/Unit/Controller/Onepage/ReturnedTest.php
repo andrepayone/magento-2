@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Returned as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
@@ -46,6 +47,7 @@ use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Magento\Framework\App\Request\Http;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReturnedTest extends BaseTestCase
 {
     /**
@@ -95,14 +97,8 @@ class ReturnedTest extends BaseTestCase
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getLastRealOrder',
-                'getQuote'
-            ])
-            ->addMethods([
-                'setLastRealOrderId',
-                'setLastOrderId',
-                'unsPayoneCustomerIsRedirected',
-                'setPayoneCreatingSubstituteOrder',
-                'unsPayoneCreatingSubstituteOrder',
+                'getQuote',
+                '__call',
             ])
             ->getMock();
 

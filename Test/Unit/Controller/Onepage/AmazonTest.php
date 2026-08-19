@@ -30,6 +30,7 @@ use Magento\Checkout\Helper\Data;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Amazon as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -43,6 +44,7 @@ use Payone\Core\Helper\Payment;
 use Magento\Customer\Model\Data\Customer;
 use Magento\Framework\Message\ManagerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonTest extends BaseTestCase
 {
     /**

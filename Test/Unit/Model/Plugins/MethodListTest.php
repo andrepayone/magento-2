@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\MethodList as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\MethodList;
 use Payone\Core\Model\Api\Request\Consumerscore;
 use Payone\Core\Helper\Consumerscore as ConsumerscoreHelper;
@@ -41,6 +42,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\ResourceModel\PaymentBan;
 use Payone\Core\Model\Risk\Addresscheck;
 
+#[AllowMockObjectsWithoutExpectations]
 class MethodListTest extends BaseTestCase
 {
     /**
@@ -92,29 +94,33 @@ class MethodListTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneProtectScore', 'getPayoneProtectScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn('Y');
-        $address->method('getPayoneProtectScore')->willReturn('Y');
-        $address->method('setPayoneProtectScore')->willReturn($address);
+        $address->setData('payone_addresscheck_score', 'Y');
+        $address->setData('payone_protect_score', 'Y');
         $address->method('save')->willReturn($address);
 
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getShippingAddress'])
-            ->addMethods(['getGrandTotal', 'getCustomerId'])
             ->getMock();
         $this->quote->method('getShippingAddress')->willReturn($address);
-        $this->quote->method('getGrandTotal')->willReturn(100.00);
+        $this->quote->setData('grand_total', 100.00);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayonePaymentBans', 'getPayonePaymentWhitelist'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $checkoutSessionData = [
+            'getPayonePaymentBans' => [PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00'],
+            'getPayonePaymentWhitelist' => ['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_cash_on_delivery', 'payone_amazonpay', 'payone_klarna_base', 'payone_klarna_invoice'],
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($this->quote);
-        $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
-        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_cash_on_delivery', 'payone_amazonpay', 'payone_klarna_base', 'payone_klarna_invoice']);
 
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
@@ -144,7 +150,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_CASH_ON_DELIVERY);
         $paymentMethods = [$paymentBanned, $payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -162,7 +168,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_CASH_ON_DELIVERY);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -180,7 +186,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -198,7 +204,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $ban = [PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00'];
         $this->paymentBan->method('getPaymentBans')->willReturn($ban);
 
@@ -217,7 +223,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn(null);
+        $this->quote->setData('customer_id', null);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
@@ -234,7 +240,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_AMAZONPAY);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -252,7 +258,7 @@ class MethodListTest extends BaseTestCase
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_OBT_IDEAL);
         $paymentMethods = [$payment];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -273,7 +279,7 @@ class MethodListTest extends BaseTestCase
 
         $paymentMethods = [$paymentBase, $paymentInvoice];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
@@ -292,7 +298,7 @@ class MethodListTest extends BaseTestCase
 
         $paymentMethods = [$paymentBase];
 
-        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->quote->setData('customer_id', '5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);

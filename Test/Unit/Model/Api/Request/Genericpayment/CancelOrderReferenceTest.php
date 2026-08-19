@@ -28,14 +28,15 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Api\Request\Genericpayment\CancelOrderReference as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\AmazonPay;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 
+#[AllowMockObjectsWithoutExpectations]
 class CancelOrderReferenceTest extends BaseTestCase
 {
     /**
@@ -76,9 +77,8 @@ class CancelOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
@@ -102,9 +102,8 @@ class CancelOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);

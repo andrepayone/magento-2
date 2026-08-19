@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Observer;
 
 use Payone\Core\Observer\OrderPaymentPlaceEnd as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Consumerscore;
 use Magento\Framework\Event;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 
+#[AllowMockObjectsWithoutExpectations]
 class OrderPaymentPlaceEndTest extends BaseTestCase
 {
     /**
@@ -62,17 +64,17 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote', 'getData'])
-            ->addMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation', 'unsetData'])
+            ->onlyMethods(['getQuote', 'getData', '__call'])
             ->getMock();
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
         $this->checkoutSession->method('getData')->willReturn(['amazon_workorder_id' => '12345']);
 
         $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getConsumerscoreSampleCounter', 'incrementConsumerscoreSampleCounter'])
-            ->addMethods(['getAdditionalDataEntry'])
             ->getMock();
-        $consumerscoreHelper->method('getAdditionalDataEntry')->willReturn(true);
         $consumerscoreHelper->method('getConsumerscoreSampleCounter')->willReturn(0);
         $consumerscoreHelper->method('incrementConsumerscoreSampleCounter')->willReturn(1);
 
@@ -96,8 +98,8 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
         $payment->method('getMethodInstance')->willReturn($paymentMethod);
         $payment->method('getOrder')->willReturn($order);
 
-        $event = $this->getMockBuilder(Event::class)->disableOriginalConstructor()->addMethods(['getPayment'])->getMock();
-        $event->method('getPayment')->willReturn($payment);
+        $event = $this->getMockBuilder(Event::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $event->setData('payment', $payment);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\TransactionStatus;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\TransactionStatus\Mapping as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Database;
 use Magento\Sales\Model\Order;
@@ -36,6 +37,7 @@ use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class MappingTest extends BaseTestCase
 {
     /**

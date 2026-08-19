@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\Transactionstatus\Paid as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
@@ -40,6 +41,7 @@ use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PaidTest extends BaseTestCase
 {
     /**
@@ -87,8 +89,8 @@ class PaidTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $observer->method('getOrder')->willReturn($order);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);
@@ -96,8 +98,8 @@ class PaidTest extends BaseTestCase
 
     public function testExecuteNoOrder()
     {
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $observer->method('getOrder')->willReturn(null);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', null);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

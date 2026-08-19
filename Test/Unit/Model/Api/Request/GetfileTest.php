@@ -29,11 +29,13 @@ namespace Payone\Core\Test\Unit\Model\Api\Request;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Getfile as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Methods\PayoneMethod;
 use PHPUnit\Framework\Exception;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class GetfileTest extends BaseTestCase
 {
     /**
@@ -52,10 +54,10 @@ class GetfileTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandateId', 'getPayoneMode'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneMandateId')->willReturn('12345');
-        $order->method('getPayoneMode')->willReturn('test');
+        $order->setData('payone_mandate_id', '12345');
+        $order->setData('payone_mode', 'test');
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
@@ -68,7 +70,7 @@ class GetfileTest extends BaseTestCase
         $expected = '';
         $this->assertEquals($expected, $result);
 
-        $this->expectException(Exception::class); // script wont be able to successfully contact payone-server
+        $this->expectException(Exception::class);
         $this->classToTest->sendRequest($order, $payment);
     }
 }

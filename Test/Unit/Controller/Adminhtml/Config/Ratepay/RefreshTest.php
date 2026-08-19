@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Adminhtml\Config\Ratepay;
 
 use Payone\Core\Controller\Adminhtml\Config\Ratepay\Refresh as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Backend\App\Action\Context;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -37,6 +38,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\AuthorizationInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class RefreshTest extends BaseTestCase
 {
     /**

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Onepage;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Block\Onepage\Review as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Address\Config;
 use Magento\Framework\DataObject;
@@ -39,6 +40,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Tax\Helper\Data;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Escaper;
 use Magento\Quote\Model\Quote\Payment;
 use Magento\Payment\Model\MethodInterface;
@@ -54,10 +56,10 @@ use Magento\Framework\View\Element\Template\File\Validator;
 use Magento\Framework\View\TemplateEnginePool;
 use Magento\Framework\View\TemplateEngineInterface;
 use Payone\Core\Helper\Shop;
-use Payone\Core\Helper\Database;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Framework\View\Asset\File;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReviewTest extends BaseTestCase
 {
     /**
@@ -160,6 +162,10 @@ class ReviewTest extends BaseTestCase
 
         $this->store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
 
+        $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $storeManager->method('getStore')->willReturn($this->store);
+        $context->method('getStoreManager')->willReturn($storeManager);
+
         $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
 
         $this->quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
@@ -172,8 +178,8 @@ class ReviewTest extends BaseTestCase
         $renderer = $this->getMockBuilder(RendererInterface::class)->disableOriginalConstructor()->getMock();
         $renderer->method('renderArray')->willReturn('address');
 
-        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getRenderer'])->getMock();
-        $object->method('getRenderer')->willReturn($renderer);
+        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $object->setData('renderer', $renderer);
 
         $addressConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
         $addressConfig->method('getFormatByCode')->willReturn($object);
@@ -218,7 +224,7 @@ class ReviewTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getData')->willReturn(['key' => 'value']);
         $result = $this->classToTest->renderAddress($address);
-        $expected = 'address'; // see setUp method
+        $expected = 'address';
         $this->assertEquals($expected, $result);
     }
 
@@ -240,8 +246,8 @@ class ReviewTest extends BaseTestCase
 
     public function testRenderShippingRateValue()
     {
-        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getErrorMessage'])->getMock();
-        $object->method('getErrorMessage')->willReturn('error');
+        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $object->setData('error_message', 'error');
         $result = $this->classToTest->renderShippingRateValue($object);
         $this->assertEquals('', $result);
     }
@@ -249,9 +255,11 @@ class ReviewTest extends BaseTestCase
     public function testRenderShippingRateValueNoError()
     {
         $expected = 'code';
-        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getErrorMessage', 'getCode'])->getMock();
-        $object->method('getErrorMessage')->willReturn(false);
-        $object->method('getCode')->willReturn($expected);
+        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $object->setData([
+            'error_message' => false,
+            'code' => $expected,
+        ]);
         $result = $this->classToTest->renderShippingRateValue($object);
         $this->assertEquals($expected, $result);
     }
@@ -260,11 +268,14 @@ class ReviewTest extends BaseTestCase
     {
         $object = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getErrorMessage', 'getMethodTitle', 'getPrice'])
+            ->onlyMethods([])
             ->getMock();
-        $object->method('getErrorMessage')->willReturn(false);
-        $object->method('getMethodTitle')->willReturn('Free Shipping');
-        $object->method('getPrice')->willReturn(5);
+
+        $object->setData([
+            'error_message' => false,
+            'method_title' => 'Free Shipping',
+            'price' => 5,
+        ]);
 
         $this->taxHelper->expects($this->any())
             ->method('getShippingPrice')
@@ -283,9 +294,11 @@ class ReviewTest extends BaseTestCase
 
     public function testRenderShippingRateOptionError()
     {
-        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getErrorMessage', 'getMethodTitle'])->getMock();
-        $object->method('getErrorMessage')->willReturn('error');
-        $object->method('getMethodTitle')->willReturn('Free Shipping');
+        $object = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $object->setData([
+            'error_message' => 'error',
+            'method_title' => 'Free Shipping',
+        ]);
         $result = $this->classToTest->renderShippingRateOption($object);
         $expected = 'html - error';
         $this->assertEquals($expected, $result);
@@ -344,11 +357,11 @@ class ReviewTest extends BaseTestCase
         $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $this->payment->method('getMethodInstance')->willReturn($infoInstance);
 
-        $rate = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getCode'])->getMock();
-        $rate->method('getCode')->willReturn('free');
+        $rate = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $rate->setData('code', 'free');
 
-        $rate2 = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->addMethods(['getCode'])->getMock();
-        $rate2->method('getCode')->willReturn('not_free');
+        $rate2 = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $rate2->setData('code', 'not_free');
 
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getGroupedAllShippingRates')->willReturn([[$rate2, $rate]]);

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Paypal;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Paypal\ReturnHandler as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress;
 use Payone\Core\Helper\Order;
@@ -42,6 +43,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Payment\Helper\Data;
 
+#[AllowMockObjectsWithoutExpectations]
 class ReturnHandlerTest extends BaseTestCase
 {
     /**
@@ -66,7 +68,6 @@ class ReturnHandlerTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getEmail', 'setEmail'])
-            ->addMethods(['setShouldIgnoreValidation'])
             ->getMock();
         $address->method('getEmail')->willReturn('test@email.com');
 
@@ -86,19 +87,11 @@ class ReturnHandlerTest extends BaseTestCase
                 'getShippingAddress',
                 'setShippingAddress'
             ])
-            ->addMethods([
-                'setCustomerId',
-                'setCustomerEmail',
-                'setCustomerGroupId',
-                'setInventoryProcessed',
-            ])
             ->getMock();
         $quote->method('getId')->willReturn('12345');
         $quote->method('setIsActive')->willReturn($quote);
         $quote->method('getPayment')->willReturn($this->payment);
         $quote->method('collectTotals')->willReturn($quote);
-        $quote->method('setCustomerId')->willReturn($quote);
-        $quote->method('setCustomerEmail')->willReturn($quote);
         $quote->method('setCustomerIsGuest')->willReturn($quote);
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);

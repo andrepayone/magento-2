@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Consumerscore;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
@@ -35,9 +36,11 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
 use Magento\Quote\Model\Quote\Address;
+use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConsumerscoreTest extends BaseTestCase
 {
     /**
@@ -88,6 +91,7 @@ class ConsumerscoreTest extends BaseTestCase
         $expected = 5;
         $this->databaseHelper->method('getConfigParamWithoutCache')->willReturn($expected);
         $result = $this->consumerscore->getConsumerscoreSampleCounter();
+        
         $this->assertEquals($expected, $result);
     }
 
@@ -207,7 +211,7 @@ class ConsumerscoreTest extends BaseTestCase
     /**
      * @return array
      */
-    public function getScoreArrays()
+    public static function getScoreArrays()
     {
         return [
             [['Y', 'G', 'R'], 'R'],
@@ -217,11 +221,11 @@ class ConsumerscoreTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getScoreArrays
      * @param array $scores
      * @param string $expected
-     *
-     * @dataProvider getScoreArrays
      */
+    #[DataProviderAttribute('getScoreArrays')]
     public function testGetWorstScore($scores, $expected)
     {
         $result = $this->consumerscore->getWorstScore($scores);
@@ -257,11 +261,8 @@ class ConsumerscoreTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save'])
-            ->addMethods(['setPayoneProtectScore', 'getPayoneProtectScore'])
             ->getMock();
-        $address->method('setPayoneProtectScore')->willReturn($address);
         $address->method('save')->willReturn(true);
-        $address->method('getPayoneProtectScore')->willReturn($expected);
 
         $this->consumerscore->copyOldStatusToNewAddress($address);
         $this->assertEquals($expected, $address->getPayoneProtectScore());

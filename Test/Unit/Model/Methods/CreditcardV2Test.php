@@ -31,6 +31,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\CreditcardV2 as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 
+#[AllowMockObjectsWithoutExpectations]
 class CreditcardV2Test extends BaseTestCase
 {
     /**
@@ -77,9 +79,9 @@ class CreditcardV2Test extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCustomerId'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getCustomerId')->willReturn(123);
+        $quote->setData('customer_id', 123);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -175,9 +177,9 @@ class CreditcardV2Test extends BaseTestCase
 
         $data = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAdditionalData'])
+            ->onlyMethods([])
             ->getMock();
-        $data->method('getAdditionalData')->willReturn($addData);
+        $data->setData('additional_data', $addData);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('default');

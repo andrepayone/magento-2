@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\RatepayShopConfig as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\AbstractElement;
@@ -35,6 +36,7 @@ use Magento\Framework\Data\Form\AbstractForm;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayShopConfigTest extends BaseTestCase
 {
     /**
@@ -60,12 +62,16 @@ class RatepayShopConfigTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'test', 'label' => 'test'],
+            ],
+        ]);
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

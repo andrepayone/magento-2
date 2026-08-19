@@ -28,12 +28,14 @@ namespace Payone\Core\Test\Unit\Model\Plugins;
 
 use Payone\Core\Model\Plugins\CreditmemoService as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Sales\Model\Service\CreditmemoService;
 use Magento\Sales\Api\Data\CreditmemoInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class CreditmemoServiceTest extends BaseTestCase
 {
     /**
@@ -51,21 +53,31 @@ class CreditmemoServiceTest extends BaseTestCase
      */
     private $checkoutSession;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getPayoneDebitRequest',
-                'getPayoneDebitResponse',
-                'getPayoneDebitOrderId',
-                'unsPayoneDebitRequest',
-                'unsPayoneDebitResponse',
-                'unsPayoneDebitOrderId'
-            ])
+            ->onlyMethods(['__call'])
             ->getMock();
+        $this->checkoutSessionData = [
+            'getPayoneDebitRequest' => ['request' => 'debit'],
+            'getPayoneDebitResponse' => ['status' => 'error'],
+        ];
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'checkoutSession' => $this->checkoutSession,
@@ -89,6 +101,8 @@ class CreditmemoServiceTest extends BaseTestCase
 
     public function testAroundRefundException()
     {
+        $this->checkoutSessionData['getPayoneDebitRequest'] = ['request' => 'debit'];
+        $this->checkoutSessionData['getPayoneDebitResponse'] = ['status' => 'error'];
         $creditmemo = $this->getMockBuilder(CreditmemoInterface::class)->disableOriginalConstructor()->getMock();
 
         $subject = $this->getMockBuilder(CreditmemoService::class)->disableOriginalConstructor()->getMock();
@@ -96,8 +110,6 @@ class CreditmemoServiceTest extends BaseTestCase
             throw new \Exception('Test');
         };
 
-        $this->checkoutSession->method('getPayoneDebitResponse')->willReturn(['status' => 'error']);
-        $this->checkoutSession->method('getPayoneDebitRequest')->willReturn(['request' => 'debit']);
 
         $this->expectException(\Exception::class);
         $this->classToTest->aroundRefund($subject, $proceed, $creditmemo, false);

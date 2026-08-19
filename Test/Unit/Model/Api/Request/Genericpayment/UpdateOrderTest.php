@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\UpdateOrder as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
@@ -36,6 +37,7 @@ use Payone\Core\Model\Methods\PaypalV2;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class UpdateOrderTest extends BaseTestCase
 {
     /**
@@ -70,10 +72,10 @@ class UpdateOrderTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('grand_total', 123);
+        $quote->setData('quote_currency_code', 'EUR');
 
         $payment = $this->getMockBuilder(PaypalV2::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');

@@ -28,14 +28,15 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CalculationTest extends BaseTestCase
 {
     /**
@@ -75,9 +76,8 @@ class CalculationTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBillingAddress'])
-            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getBillingAddress')->willReturn($address);
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
@@ -99,9 +99,9 @@ class CalculationTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');

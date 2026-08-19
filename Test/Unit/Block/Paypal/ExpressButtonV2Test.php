@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Paypal;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Helper\Data;
@@ -42,6 +43,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ExpressButtonV2Test extends BaseTestCase
 {
     /**

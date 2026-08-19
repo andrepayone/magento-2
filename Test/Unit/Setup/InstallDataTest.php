@@ -28,14 +28,17 @@ namespace Payone\Core\Test\Unit\Setup;
 
 use Payone\Core\Setup\InstallData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\DB\Select;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallDataTest extends BaseTestCase
 {
     /**
@@ -68,15 +71,19 @@ class InstallDataTest extends BaseTestCase
     {
         $fetchResult = [['scope' => 'website', 'scope_id' => 2]];
 
-        $connection = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['select', 'insert', 'fetchAssoc'])
-            ->addMethods(['from', 'where', 'order'])
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['from', 'where', 'order'])
             ->getMock();
-        $connection->method('select')->willReturn($connection);
-        $connection->method('from')->willReturn($connection);
-        $connection->method('where')->willReturn($connection);
-        $connection->method('order')->willReturn($connection);
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+        $select->method('order')->willReturn($select);
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['select', 'insert', 'fetchAssoc'])
+            ->getMock();
+        $connection->method('select')->willReturn($select);
         $connection->method('insert')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
 

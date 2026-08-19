@@ -28,12 +28,14 @@ namespace Payone\Core\Test\Unit\Ui\Component\Listing\Column;
 
 use Payone\Core\Ui\Component\Listing\Column\ViewAction as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\View\Element\UiComponent\Context;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ViewActionTest extends BaseTestCase
 {
     /**

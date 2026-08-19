@@ -29,11 +29,12 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\PlaceOrder as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Api\AgreementsValidatorInterface;
 use Magento\Quote\Api\CartManagementInterface;
-use Magento\Framework\App\Console\Response;
+use Magento\Framework\App\Response\Http as Response;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http;
@@ -45,6 +46,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Helper\Checkout;
 
+#[AllowMockObjectsWithoutExpectations]
 class PlaceOrderTest extends BaseTestCase
 {
     /**
@@ -87,6 +89,13 @@ class PlaceOrderTest extends BaseTestCase
      */
     private $quote;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -98,7 +107,7 @@ class PlaceOrderTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setRedirect'])
+            ->onlyMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
@@ -139,49 +148,29 @@ class PlaceOrderTest extends BaseTestCase
                 'getPayment',
                 'save'
             ])
-            ->addMethods([
-                'getSubtotal',
-            ])
             ->getMock();
         $this->quote->method('getBillingAddress')->willReturn($address);
         $this->quote->method('getShippingAddress')->willReturn($address);
         $this->quote->method('getIsVirtual')->willReturn(false);
         $this->quote->method('getId')->willReturn('12345');
         $this->quote->method('setIsActive')->willReturn($this->quote);
-        $this->quote->method('getSubtotal')->willReturn(100);
+        $this->quote->setData('subtotal', 100);
         $this->quote->method('getPayment')->willReturn($payment);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getQuote',
-            ])
-            ->addMethods([
-                'setLastQuoteId',
-                'setLastSuccessQuoteId',
-                'unsPayoneWorkorderId',
-                'unsIsPayonePayPalExpress',
-                'getPayoneQuoteComparisonString',
-                'setPayoneDeviceFingerprint',
-                'unsPayoneDeviceFingerprint',
-                'setPayoneUserAgent',
-                'unsPayoneUserAgent',
-                'setPayoneExpressType',
-                'setIsPayonePayPalExpress',
-                'getPayoneRedirectUrl',
-                'setPayonePayPalExpressRetry',
-                'setPayoneCustomerIsRedirected',
-                'setIsPayoneAmazonPayAuth',
-                'getPayoneQuoteAddressHash',
+                '__call',
             ])
             ->getMock();
-        $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('setLastSuccessQuoteId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('unsIsPayonePayPalExpress')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('unsPayoneUserAgent')->willReturn($this->checkoutSession);
-        $this->checkoutSession->method('setIsPayonePayPalExpress')->willReturn(true);
-        $this->checkoutSession->method('setPayonePayPalExpressRetry')->willReturn($this->checkoutSession);
+
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);
@@ -203,7 +192,7 @@ class PlaceOrderTest extends BaseTestCase
     {
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSessionData['getPayoneQuoteComparisonString'] = "QuoteString";
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -221,7 +210,7 @@ class PlaceOrderTest extends BaseTestCase
     {
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSessionData['getPayoneQuoteComparisonString'] = "QuoteString";
 
         $exception = new \Exception();
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
@@ -235,7 +224,7 @@ class PlaceOrderTest extends BaseTestCase
     {
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteFalse");
+        $this->checkoutSessionData['getPayoneQuoteComparisonString'] = "QuoteFalse";
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -245,8 +234,8 @@ class PlaceOrderTest extends BaseTestCase
     {
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
+        $this->checkoutSessionData['getPayoneQuoteComparisonString'] = "QuoteString";
+        $this->checkoutSessionData['getPayoneRedirectUrl'] = "http://someurl.test";
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -270,21 +259,18 @@ class PlaceOrderTest extends BaseTestCase
                 'getPayment',
                 'save'
             ])
-            ->addMethods([
-                'getSubtotal',
-            ])
             ->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getIsVirtual')->willReturn(false);
         $quote->method('getId')->willReturn('12345');
         $quote->method('setIsActive')->willReturn($quote);
-        $quote->method('getSubtotal')->willReturn(100);
+        $quote->setData('subtotal', 100);
         $quote->method('getPayment')->willReturn($payment);
 
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
-        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
+        $this->checkoutSessionData['getPayoneQuoteComparisonString'] = "QuoteString";
+        $this->checkoutSessionData['getPayoneRedirectUrl'] = "http://someurl.test";
         $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();

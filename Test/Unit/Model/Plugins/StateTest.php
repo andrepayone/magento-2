@@ -31,6 +31,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Model\Plugins\State as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Sales\Model\ResourceModel\Order\Handler\State;
@@ -38,6 +39,7 @@ use Magento\Sales\Model\Order\Payment;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Sales\Model\Order\Config;
 
+#[AllowMockObjectsWithoutExpectations]
 class StateTest extends BaseTestCase
 {
     /**
@@ -78,11 +80,10 @@ class StateTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
-            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
-        $order->method('getIsInProcess')->willReturn(true);
+        $order->setData('is_in_process', true);
         $order->method('isCanceled')->willReturn(false);
         $order->method('canUnhold')->willReturn(false);
         $order->method('canInvoice')->willReturn(false);
@@ -116,11 +117,10 @@ class StateTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
-            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
-        $order->method('getIsInProcess')->willReturn(true);
+        $order->setData('is_in_process', true);
         $order->method('isCanceled')->willReturn(false);
         $order->method('canUnhold')->willReturn(false);
         $order->method('canInvoice')->willReturn(false);

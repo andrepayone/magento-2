@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
@@ -38,6 +39,7 @@ use Payone\Core\Helper\Environment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PreCheckTest extends BaseTestCase
 {
     /**
@@ -88,9 +90,8 @@ class PreCheckTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBillingAddress'])
-            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getBillingAddress')->willReturn($address);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
@@ -99,12 +100,11 @@ class PreCheckTest extends BaseTestCase
         $payment = $this->getMockBuilder(Paypal::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getOperationMode', 'getClearingtype', 'getSubType', 'getData', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
-            ->addMethods(['getLongSubType'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getClearingtype')->willReturn('fnc');
         $payment->method('getSubType')->willReturn('PYD');
-        $payment->method('getLongSubType')->willReturn('Payolution-Debit');
+        $payment->setData('long_sub_type', 'Payolution-Debit');
         $payment->method('getData')->willReturn(true);
         $payment->method('getInfoInstance')->willReturn($paymentInfo);
         $payment->method('hasCustomConfig')->willReturn(true);

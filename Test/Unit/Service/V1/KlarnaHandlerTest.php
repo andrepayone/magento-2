@@ -31,6 +31,7 @@ use Payone\Core\Model\Methods\Klarna\Invoice;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\KlarnaHandler as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Payone\Core\Service\V1\Data\KlarnaHandlerResponse;
@@ -42,6 +43,7 @@ use Magento\Customer\Model\Address;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 
+#[AllowMockObjectsWithoutExpectations]
 class KlarnaHandlerTest extends BaseTestCase
 {
     /**

@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\PersonStatusMapping as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Factory;
 use Payone\Core\Model\Source\PersonStatus;
@@ -37,6 +38,7 @@ use Magento\Framework\Data\Form\AbstractForm;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PersonStatusMappingTest extends BaseTestCase
 {
     /**
@@ -48,6 +50,8 @@ class PersonStatusMappingTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    protected $needsObjectManagerMock = true;
 
     protected function setUp(): void
     {
@@ -62,12 +66,16 @@ class PersonStatusMappingTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'NONE', 'label' => 'NONE'],
+            ],
+        ]);
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

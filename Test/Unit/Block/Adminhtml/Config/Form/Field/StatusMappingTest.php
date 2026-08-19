@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection;
@@ -34,10 +35,10 @@ use Payone\Core\Model\Source\TransactionStatus;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
-use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class StatusMappingTest extends BaseTestCase
 {
     /**
@@ -49,6 +50,11 @@ class StatusMappingTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
 
     /**
      * @var Multiselect|\PHPUnit_Framework_MockObject_MockObject
@@ -68,12 +74,8 @@ class StatusMappingTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 

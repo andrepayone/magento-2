@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\StartSession as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Klarna\Invoice;
@@ -38,6 +39,7 @@ use Payone\Core\Helper\Environment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class StartSessionTest extends BaseTestCase
 {
     /**
@@ -88,10 +90,9 @@ class StartSessionTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getBillingAddress', 'getShippingAddress'])
-            ->addMethods(['getQuoteCurrencyCode', 'getCustomerEmail'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
-        $quote->method('getCustomerEmail')->willReturn('tester@payone.de');
+        $quote->setData('quote_currency_code', 'EUR');
+        $quote->setData('customer_email', 'tester@payone.de');
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);
 

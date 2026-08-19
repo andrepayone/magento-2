@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\ApplePay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -36,6 +37,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\ApplePay;
 use Magento\Framework\DataObject;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApplePayTest extends BaseTestCase
 {
     /**

@@ -33,11 +33,13 @@ use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Model\Methods\Ratepay\Installment as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallmentTest extends BaseTestCase
 {
     /**
@@ -65,10 +67,9 @@ class InstallmentTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getShippingAddress'])
-            ->addMethods(['getGrandTotal'])
             ->getMock();
         $quote->method('getShippingAddress')->willReturn($shipping);
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);

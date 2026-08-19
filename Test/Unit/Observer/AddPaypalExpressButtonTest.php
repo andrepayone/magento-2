@@ -30,6 +30,7 @@ use Magento\Catalog\Block\ShortcutButtons;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Helper\Payment;
@@ -37,6 +38,7 @@ use Payone\Core\Observer\AddPaypalExpressButtons as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class AddPaypalExpressButtonTest extends BaseTestCase
 {
     /**
@@ -90,9 +92,8 @@ class AddPaypalExpressButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getContainer'])
-            ->getMock();
-        $event->method('getContainer')->willReturn($shortcutButtons);
+            ->onlyMethods([])->getMock();
+        $event->setData('container', $shortcutButtons);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
@@ -120,9 +121,8 @@ class AddPaypalExpressButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getContainer'])
-            ->getMock();
-        $event->method('getContainer')->willReturn($shortcutButtons);
+            ->onlyMethods([])->getMock();
+        $event->setData('container', $shortcutButtons);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);

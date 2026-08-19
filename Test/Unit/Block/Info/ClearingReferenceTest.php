@@ -29,12 +29,14 @@ namespace Payone\Core\Test\Unit\Block\Info;
 use Magento\Sales\Model\Order;
 use Payone\Core\Block\Info\ClearingReference as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ClearingReferenceTest extends BaseTestCase
 {
     /**
@@ -58,34 +60,36 @@ class ClearingReferenceTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneTxid', 'getPayoneClearingReference'])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneTxid')->willReturn('12345');
-        $order->method('getPayoneClearingReference')->willReturn('REFERENCE');
+
+        $order->setData([
+            'payone_txid' => '12345',
+            'payone_clearing_reference' => 'REFERENCE',
+        ]);
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getLastTransId', 'getOrder'])
+            ->onlyMethods([])
             ->getMock();
-        $this->info->method('getOrder')->willReturn($order);
+
+        $this->info->setData('order', $order);
 
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getClearingBankcode',
-                'getClearingBankaccountholder',
-                'getClearingBankaccount',
-                'getClearingBankiban',
-                'getClearingBankbic',
-                'getClearingBankname'
-            ])
+            ->onlyMethods([])
             ->getMock();
-        $transactionStatus->method('getClearingBankcode')->willReturn('12345');
-        $transactionStatus->method('getClearingBankaccountholder')->willReturn('12345');
-        $transactionStatus->method('getClearingBankaccount')->willReturn('12345');
-        $transactionStatus->method('getClearingBankiban')->willReturn('12345');
-        $transactionStatus->method('getClearingBankbic')->willReturn('12345');
-        $transactionStatus->method('getClearingBankname')->willReturn('12345');
+
+        $transactionStatus->setData([
+            'clearing_bankcode' => '12345',
+            'clearing_bankaccountholder' => '12345',
+            'clearing_bankaccount' => '12345',
+            'clearing_bankiban' => '12345',
+            'clearing_bankbic' => '12345',
+            'clearing_bankname' => '12345',
+            'clearing_bankcountry' => 'DE',
+            'clearing_bankcity' => 'Berlin',
+        ]);
 
         $transactionStatusRepository = $this->getMockBuilder(TransactionStatusRepository::class)->disableOriginalConstructor()->getMock();
         $transactionStatusRepository->method('getAppointedByTxid')->willReturn($transactionStatus);
@@ -98,10 +102,23 @@ class ClearingReferenceTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
+
+        $expected = [
+            'Please transfer the order amount to this bank account' => '',
+            'Accountholder' => '12345',
+            'IBAN' => '12345',
+            'BIC' => '12345',
+            'Bank' => '12345',
+            'Bank country' => 'DE',
+            'Bank city' => 'Berlin',
+            'Payone Transaction ID' => '12345',
+            'Payment reference' => 'REFERENCE',
+        ];
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('IBAN', $result);
+        $this->assertEquals($expected, $result);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
@@ -109,7 +126,7 @@ class ClearingReferenceTest extends BaseTestCase
 
     public function testPrepareSpecificInformationNoLastTransId()
     {
-        $this->info->method('getLastTransId')->willReturn('');
+        $this->info->setData('last_trans_id', '');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Payment has not been processed yet.', $result);

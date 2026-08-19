@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Block\Onepage\Totals as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
@@ -36,8 +37,14 @@ use Payone\Core\Helper\Base;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class TotalsTest extends BaseTestCase
 {
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
     /**
      * @var ClassToTest
      */
@@ -74,10 +81,13 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getBaseCurrencyCode')->willReturn('EUR');
-        $quote->method('getQuoteCurrencyCode')->willReturn('GBP');
+
+        $quote->setData([
+            'base_currency_code' => 'EUR',
+            'quote_currency_code' => 'GBP',
+        ]);
 
         $this->classToTest->setCustomQuote($quote);
 
@@ -89,10 +99,13 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getBaseCurrencyCode')->willReturn('EUR');
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+
+        $quote->setData([
+            'base_currency_code' => 'EUR',
+            'quote_currency_code' => 'EUR',
+        ]);
 
         $this->classToTest->setCustomQuote($quote);
 

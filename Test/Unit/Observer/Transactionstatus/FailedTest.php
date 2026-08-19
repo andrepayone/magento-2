@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\Transactionstatus\Failed as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
@@ -36,6 +37,7 @@ use Payone\Core\Helper\Mail;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class FailedTest extends BaseTestCase
 {
     /**
@@ -69,8 +71,8 @@ class FailedTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getCustomerEmail')->willReturn('test@test.com');
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $observer->method('getOrder')->willReturn($order);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

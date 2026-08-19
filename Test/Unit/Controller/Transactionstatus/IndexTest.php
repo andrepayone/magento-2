@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Transactionstatus;
 
 use Payone\Core\Controller\Transactionstatus\Index as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Action\Context;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Environment;
@@ -37,10 +38,12 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\Request\Http;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\Handler\SubstituteOrder;
 
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends BaseTestCase
 {
     /**
@@ -82,8 +85,7 @@ class IndexTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $post = $this->getMockBuilder(self::class)->disableOriginalConstructor()->addMethods(['toArray'])->getMock();
-        $post->method('toArray')->willReturn(['test' => 'array']);
+        $post = new DataObject(['test' => 'array']);
 
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\Transactionstatus\Pending as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
@@ -36,6 +37,7 @@ use Payone\Core\Helper\Mail;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class PendingTest extends BaseTestCase
 {
     /**
@@ -74,9 +76,9 @@ class PendingTest extends BaseTestCase
             'reasoncode' => 981
         ];
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder', 'getTransactionstatus'])->getMock();
-        $observer->method('getOrder')->willReturn($order);
-        $observer->method('getTransactionstatus')->willReturn($transactionStatus);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
+        $observer->setData('transactionstatus', $transactionStatus);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);
@@ -93,9 +95,9 @@ class PendingTest extends BaseTestCase
 
         $transactionStatus = ['status' => 'error'];
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder', 'getTransactionstatus'])->getMock();
-        $observer->method('getOrder')->willReturn($order);
-        $observer->method('getTransactionstatus')->willReturn($transactionStatus);
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
+        $observer->setData('transactionstatus', $transactionStatus);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

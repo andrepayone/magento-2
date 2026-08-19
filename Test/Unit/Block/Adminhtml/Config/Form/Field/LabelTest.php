@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\Label as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -34,6 +35,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Base;
 use Magento\Framework\View\LayoutInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class LabelTest extends BaseTestCase
 {
     /**
@@ -79,26 +81,24 @@ class LabelTest extends BaseTestCase
             ->onlyMethods([
                 'getHtmlId',
                 'getName',
-                'generateElementId',
-            ])
-            ->addMethods([
-                'unsScope',
-                'unsCanUseWebsiteValue',
-                'unsCanUseDefaultValue',
-                'getLabel',
-                'getComment',
-                'getOriginalData'
             ])
             ->getMock();
-        $element->method('unsScope')->willReturn($element);
-        $element->method('unsCanUseWebsiteValue')->willReturn($element);
-        $element->method('unsCanUseDefaultValue')->willReturn($element);
+
+        $element->setData([
+            'formelementhookid' => 'test',
+            'label' => 'test',
+            'comment' => 'comment',
+            'original_data' => [
+                'path' => 'payone_payment/ratepay_invoice'
+            ],
+            'scope' => true,
+            'can_use_website_value' => true,
+            'can_use_default_value' => true,
+        ]);
+
         $element->method('getHtmlId')->willReturn('test');
         $element->method('getName')->willReturn('test');
-        $element->setData('formelementhookid', 'test');
-        $element->method('getComment')->willReturn('comment');
-        $element->method('getLabel')->willReturn('test');
-        $element->method('getOriginalData')->willReturn(['path' => 'payone_payment/ratepay_invoice']);
+
         return $element;
     }
 

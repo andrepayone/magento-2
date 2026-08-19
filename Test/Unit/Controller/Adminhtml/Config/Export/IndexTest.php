@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Controller\Adminhtml\Config\Export;
 
 use Payone\Core\Controller\Adminhtml\Config\Export\Index as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\View\Result\Page;
@@ -40,6 +41,7 @@ use Magento\Framework\Controller\Result\Raw;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends BaseTestCase
 {
     /**

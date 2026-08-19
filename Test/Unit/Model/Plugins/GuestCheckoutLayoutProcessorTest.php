@@ -31,6 +31,7 @@ use Payone\Core\Helper\Checkout;
 use Payone\Core\Model\Plugins\GuestCheckoutLayoutProcessor as ClassToTest;
 use Magento\Checkout\Model\ShippingInformationManagement;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -41,6 +42,7 @@ use Magento\Customer\Model\Data\Option;
 use Magento\Customer\Model\Data\AttributeMetadata;
 use Magento\Checkout\Model\Session;
 
+#[AllowMockObjectsWithoutExpectations]
 class GuestCheckoutLayoutProcessorTest extends BaseTestCase
 {
     /**

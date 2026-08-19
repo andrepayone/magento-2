@@ -28,14 +28,15 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\AmazonPay;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConfirmOrderReferenceTest extends BaseTestCase
 {
     /**
@@ -76,13 +77,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode', 'getGrandTotal'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -104,13 +104,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getReservedOrderId', 'reserveOrderId', 'save'])
-            ->addMethods(['getQuoteCurrencyCode', 'getGrandTotal'])
             ->getMock();
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->setData('quote_currency_code', 'EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');

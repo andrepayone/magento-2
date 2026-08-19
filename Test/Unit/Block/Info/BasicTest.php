@@ -29,12 +29,14 @@ namespace Payone\Core\Test\Unit\Block\Info;
 use Magento\Sales\Model\Order;
 use Payone\Core\Block\Info\Basic as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class BasicTest extends BaseTestCase
 {
     /**
@@ -48,7 +50,7 @@ class BasicTest extends BaseTestCase
     private $objectManager;
 
     /**
-     * @var Info|\PHPUnit_Framework_MockObject_MockObject
+     * @var Info
      */
     private $info;
 
@@ -58,35 +60,29 @@ class BasicTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getPayoneTxid',
-                'getPayoneClearingBankcode',
-                'getPayoneClearingBankaccountholder',
-                'getPayoneClearingBankaccount',
-                'getPayoneClearingBankiban',
-                'getPayoneClearingBankbic',
-                'getPayoneClearingBankname'
-            ])
+            ->onlyMethods([])
             ->getMock();
-        $order->method('getPayoneTxid')->willReturn('12345');
-        $order->method('getPayoneClearingBankcode')->willReturn('12345');
-        $order->method('getPayoneClearingBankaccountholder')->willReturn('12345');
-        $order->method('getPayoneClearingBankaccount')->willReturn('12345');
-        $order->method('getPayoneClearingBankiban')->willReturn('12345');
-        $order->method('getPayoneClearingBankbic')->willReturn('12345');
-        $order->method('getPayoneClearingBankname')->willReturn('12345');
+
+        $order->setData([
+            'payone_txid' => '12345',
+            'payone_clearing_bankcode' => '12345',
+            'payone_clearing_bankaccountholder' => '12345',
+            'payone_clearing_bankaccount' => '12345',
+            'payone_clearing_bankiban' => '12345',
+            'payone_clearing_bankbic' => '12345',
+            'payone_clearing_bankname' => '12345',
+        ]);
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getLastTransId', 'getOrder'])
+            ->onlyMethods([])
             ->getMock();
-        $this->info->method('getOrder')->willReturn($order);
+
+        $this->info->setData('order', $order);
 
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getClearingBankcode'])
             ->getMock();
-        $transactionStatus->method('getClearingBankcode')->willReturn('12345');
 
         $transactionStatusRepository = $this->getMockBuilder(TransactionStatusRepository::class)->disableOriginalConstructor()->getMock();
         $transactionStatusRepository->method('getAppointedByTxid')->willReturn($transactionStatus);
@@ -99,7 +95,7 @@ class BasicTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->info->method('getLastTransId')->willReturn('12345');
+        $this->info->setData('last_trans_id', '12345');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('IBAN', $result);
@@ -110,7 +106,7 @@ class BasicTest extends BaseTestCase
 
     public function testPrepareSpecificInformationNoLastTransId()
     {
-        $this->info->method('getLastTransId')->willReturn('');
+        $this->info->setData('last_trans_id', '');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Payment has not been processed yet.', $result);

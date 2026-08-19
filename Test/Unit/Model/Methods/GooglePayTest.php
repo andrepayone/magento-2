@@ -32,6 +32,7 @@ use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote;
 use Magento\Payment\Model\Info;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\DataObject;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
@@ -40,6 +41,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class GooglePayTest extends BaseTestCase
 {
     /**
@@ -84,20 +86,26 @@ class GooglePayTest extends BaseTestCase
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('info');
-        $info->method('getOrder')->willReturn($order);
+        $info->setData('order', $order);
 
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('info');
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneMandate', 'unsPayoneMandate'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
-        $checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => '123', 'mandate_status' => 'pending']);
+        $checkoutSessionData = [
+            'getPayoneMandate' => ['mandate_identification' => '123', 'mandate_status' => 'pending'],
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($this->quote);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

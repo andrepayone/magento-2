@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Methods\Klarna;
 
 use Payone\Core\Model\Methods\Klarna\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
@@ -39,6 +40,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class DebitTest extends BaseTestCase
 {
     /**

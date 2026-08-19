@@ -27,10 +27,12 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Order\View\Tab;
 
 use Payone\Core\Block\Adminhtml\Order\View\Tab\ApiLog as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApiLogTest extends BaseTestCase
 {
     /**

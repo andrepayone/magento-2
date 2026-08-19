@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Customer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
@@ -38,9 +39,11 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
+use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CustomerTest extends BaseTestCase
 {
     /**
@@ -73,6 +76,13 @@ class CustomerTest extends BaseTestCase
      */
     private $checkoutSession;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -93,15 +103,19 @@ class CustomerTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneGuestGender', 'getPayoneGuestDateofbirth'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->region = $this->getMockBuilder(Region::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'loadByName', 'loadByCode'])
-            ->addMethods(['getCode'])
             ->getMock();
         $regionFactory = $this->getMockBuilder(RegionFactory::class)->disableOriginalConstructor()->getMock();
         $regionFactory->method('create')->willReturn($this->region);
@@ -116,7 +130,7 @@ class CustomerTest extends BaseTestCase
 
     public function testGetCustomerGenderFemale()
     {
-        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
+        $this->checkoutSessionData['getPayoneGuestGender'] = null;
         $this->coreCustomer->method('getGender')->willReturn(2);
         $result = $this->customer->getCustomerGender();
         $expected = 'f';
@@ -125,7 +139,7 @@ class CustomerTest extends BaseTestCase
 
     public function testGetCustomerGenderMale()
     {
-        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
+        $this->checkoutSessionData['getPayoneGuestGender'] = null;
         $this->coreCustomer->method('getGender')->willReturn(1);
         $result = $this->customer->getCustomerGender();
         $expected = 'm';
@@ -134,7 +148,7 @@ class CustomerTest extends BaseTestCase
 
     public function testGetCustomerGenderNull()
     {
-        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
+        $this->checkoutSessionData['getPayoneGuestGender'] = null;
         $this->coreCustomer->method('getGender')->willReturn(null);
         $result = $this->customer->getCustomerGender();
         $this->assertNull($result);
@@ -142,7 +156,7 @@ class CustomerTest extends BaseTestCase
 
     public function testGetCustomerGenderSession()
     {
-        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(3);
+        $this->checkoutSessionData['getPayoneGuestGender'] = 3;
         $result = $this->customer->getCustomerGender();
         $expected = 'd';
         $this->assertEquals($expected, $result);
@@ -150,7 +164,7 @@ class CustomerTest extends BaseTestCase
 
     public function testCustomerHasGivenBirthday()
     {
-        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn(null);
+        $this->checkoutSessionData['getPayoneGuestDateofbirth'] = null;
         $expected = '19851130';
         $this->coreCustomer->method('getDob')->willReturn('11/30/1985');
         $result = $this->customer->getCustomerBirthday();
@@ -159,7 +173,7 @@ class CustomerTest extends BaseTestCase
 
     public function testCustomerHasGivenBirthdayNull()
     {
-        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn(null);
+        $this->checkoutSessionData['getPayoneGuestDateofbirth'] = null;
         $this->coreCustomer->method('getDob')->willReturn(null);
         $result = $this->customer->getCustomerBirthday();
         $this->assertNull($result);
@@ -167,7 +181,7 @@ class CustomerTest extends BaseTestCase
 
     public function testCustomerHasGivenBirthdaySession()
     {
-        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn('11/09/1985');
+        $this->checkoutSessionData['getPayoneGuestDateofbirth'] = '11/09/1985';
         $expected = '19851109';
         $result = $this->customer->getCustomerBirthday();
         $this->assertEquals($expected, $result);
@@ -182,7 +196,7 @@ class CustomerTest extends BaseTestCase
         $address->method('getCountryId')->willReturn('US');
 
         $this->region->method('getId')->willReturn('5');
-        $this->region->method('getCode')->willReturn($expected);
+        $this->region->setData('code', $expected);
 
         $result = $this->customer->getRegionCode($address);
         $this->assertEquals($expected, $result);
@@ -215,7 +229,7 @@ class CustomerTest extends BaseTestCase
     /**
      * @return array
      */
-    public function getGenders()
+    public static function getGenders()
     {
         return [
             ['1', 'm'],
@@ -225,11 +239,11 @@ class CustomerTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getGenders
      * @param int $gender
      * @param string $expected
-     *
-     * @dataProvider getGenders
      */
+    #[DataProviderAttribute('getGenders')]
     public function testGetGenderParameter($gender, $expected)
     {
         $result = $this->customer->getGenderParameter($gender);
@@ -239,7 +253,7 @@ class CustomerTest extends BaseTestCase
     /**
      * @return array
      */
-    public function getSalutations()
+    public static function getSalutations()
     {
         return [
             ['1', 'Mr'],
@@ -249,11 +263,11 @@ class CustomerTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider getSalutations
      * @param int $gender
      * @param string $expected
-     *
-     * @dataProvider getSalutations
      */
+    #[DataProviderAttribute('getSalutations')]
     public function testGetSalutationParameter($gender, $expected)
     {
         $result = $this->customer->getSalutationParameter($gender);

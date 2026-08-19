@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
@@ -36,6 +37,7 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class SetOrderReferenceDetailsTest extends BaseTestCase
 {
     /**
@@ -78,9 +80,9 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getGrandTotal'])
+            ->onlyMethods([])
             ->getMock();
-        $quote->method('getGrandTotal')->willReturn(100);
+        $quote->setData('grand_total', 100);
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 

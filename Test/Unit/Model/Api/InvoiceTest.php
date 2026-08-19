@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Model\Api;
 
 use Payone\Core\Model\Api\Invoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\AmastyGiftcard;
 use Payone\Core\Model\Api\Request\Authorization;
@@ -38,6 +39,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
 
+#[AllowMockObjectsWithoutExpectations]
 class InvoiceTest extends BaseTestCase
 {
     /**
@@ -96,28 +98,34 @@ class InvoiceTest extends BaseTestCase
     private function getItemMock($type = Item::class)
     {
         $onlyMethods = ['isDummy', 'getProductId', 'getQtyOrdered', 'getSku', 'getPriceInclTax', 'getBasePriceInclTax', 'getName', 'getTaxPercent', 'getOrigData', 'getParentItemId', 'getProduct'];
-        $addMethods = ['getQty'];
         if ($type === \Magento\Quote\Model\Quote\Item::class) {
             $onlyMethods = ['getSku', 'getName', 'getOrigData', 'getProduct', 'getQty'];
-            $addMethods = ['getProductId', 'isDummy', 'getPriceInclTax', 'getBasePriceInclTax', 'getQtyOrdered', 'getTaxPercent', 'getParentItemId'];
         }
         $item = $this->getMockBuilder($type)
             ->disableOriginalConstructor()
             ->onlyMethods($onlyMethods)
-            ->addMethods($addMethods)
             ->getMock();
 
-        $item->method('isDummy')->willReturn(false);
-        $item->method('getProductId')->willReturn('12345');
-        $item->method('getQtyOrdered')->willReturn('1');
-        $item->method('getQty')->willReturn('1');
-        $item->method('getSku')->willReturn('test_123');
-        $item->method('getPriceInclTax')->willReturn('120');
-        $item->method('getBasePriceInclTax')->willReturn('100');
-        $item->method('getName')->willReturn('Test product');
-        $item->method('getTaxPercent')->willReturn('19');
-        $item->method('getOrigData')->willReturn('1');
-        $item->method('getParentItemId')->willReturn(null);
+        $values = [
+            'isDummy' => false,
+            'getProductId' => '12345',
+            'getQtyOrdered' => '1',
+            'getQty' => '1',
+            'getSku' => 'test_123',
+            'getPriceInclTax' => '120',
+            'getBasePriceInclTax' => '100',
+            'getName' => 'Test product',
+            'getTaxPercent' => '19',
+            'getOrigData' => '1',
+            'getParentItemId' => null,
+        ];
+        foreach ($values as $method => $value) {
+            if (in_array($method, $onlyMethods, true)) {
+                $item->method($method)->willReturn($value);
+            } elseif (strpos($method, 'get') === 0) {
+                $item->setData(strtolower(preg_replace('/(.)([A-Z])/', '$1_$2', substr($method, 3))), $value);
+            }
+        }
         return $item;
     }
 
@@ -154,9 +162,6 @@ class InvoiceTest extends BaseTestCase
                 'getBaseGrandTotal',
                 'getStore',
             ])
-            ->addMethods([
-                'getGiftCards'
-            ])
             ->disableOriginalConstructor()->getMock();
         $order->method('getAllItems')->willReturn($items);
         $order->method('getBaseShippingInclTax')->willReturn(-5);
@@ -164,7 +169,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn(115);
         $order->method('getStore')->willReturn($this->store);
-        $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
+        $order->setData('gift_cards', '[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
         $this->classToTest->setSendCategoryUrl(true);
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
@@ -197,9 +202,6 @@ class InvoiceTest extends BaseTestCase
                 'getGrandTotal',
                 'getStore',
             ])
-            ->addMethods([
-                'getGiftCards'
-            ])
             ->disableOriginalConstructor()
             ->getMock();
         $order->method('getAllItems')->willReturn($items);
@@ -211,7 +213,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseGrandTotal')->willReturn(113);
         $order->method('getGrandTotal')->willReturn(113);
         $order->method('getStore')->willReturn($this->store);
-        $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
+        $order->setData('gift_cards', '[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
         $this->classToTest->setSendCategoryUrl(true);
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
@@ -315,18 +317,12 @@ class InvoiceTest extends BaseTestCase
                 'getAllItems',
                 'getStore',
             ])
-            ->addMethods([
-                'getBaseShippingInclTax',
-                'getBaseDiscountAmount',
-                'getCouponCode',
-                'getBaseGrandTotal',
-            ])
             ->getMock();
         $order->method('getAllItems')->willReturn($items);
-        $order->method('getBaseShippingInclTax')->willReturn(5);
-        $order->method('getBaseDiscountAmount')->willReturn(-5);
-        $order->method('getCouponCode')->willReturn('test');
-        $order->method('getBaseGrandTotal')->willReturn($expected);
+        $order->setData('base_shipping_incl_tax', 5);
+        $order->setData('base_discount_amount', -5);
+        $order->setData('coupon_code', 'test');
+        $order->setData('base_grand_total', $expected);
         $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false, false, 5);

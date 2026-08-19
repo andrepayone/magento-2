@@ -27,12 +27,14 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\AmazonConfiguration as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\View\LayoutInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonConfigurationTest extends BaseTestCase
 {
     /**
@@ -64,23 +66,25 @@ class AmazonConfigurationTest extends BaseTestCase
             ->onlyMethods([
                 'getHtmlId',
             ])
-            ->addMethods([
-                'unsScope',
-                'unsCanUseWebsiteValue',
-                'unsCanUseDefaultValue',
-                'getLabel',
-                'getOriginalData'
-            ])
             ->getMock();
-        $element->method('unsScope')->willReturn($element);
-        $element->method('unsCanUseWebsiteValue')->willReturn($element);
-        $element->method('unsCanUseDefaultValue')->willReturn($element);
+
         $element->method('getHtmlId')->willReturn('test');
-        $element->method('getLabel')->willReturn('test');
-        $element->method('getOriginalData')->willReturn(['button_label' => 'test']);
+
+        $element->setData([
+            'label' => 'test',
+            'original_data' => [
+                'button_label' => 'test'
+            ],
+            'scope' => true,
+            'can_use_website_value' => true,
+            'can_use_default_value' => true,
+        ]);
 
         $result = $this->classToTest->render($element);
         $this->assertNotEmpty($result);
+        $this->assertFalse($element->hasData('scope'));
+        $this->assertFalse($element->hasData('can_use_website_value'));
+        $this->assertFalse($element->hasData('can_use_default_value'));
     }
 
     public function testPrepareLayout()

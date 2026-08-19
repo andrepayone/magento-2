@@ -33,6 +33,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\Data\PayPalResponse;
 use Payone\Core\Service\V1\PayPal as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -48,6 +49,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Payment\Helper\Data;
 
+#[AllowMockObjectsWithoutExpectations]
 class PayPalTest extends BaseTestCase
 {
     /**
@@ -61,6 +63,13 @@ class PayPalTest extends BaseTestCase
     private $response;
 
     private $paypalExpress;
+
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
 
     protected function setUp(): void
     {
@@ -89,13 +98,14 @@ class PayPalTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'setIsPayonePayPalExpress',
-                'setPayoneWorkorderId',
-                'setPayoneQuoteComparisonString',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->paypalExpress = $this->getMockBuilder(PayPalExpress::class)->disableOriginalConstructor()->getMock();

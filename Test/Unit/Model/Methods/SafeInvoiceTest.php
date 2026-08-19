@@ -30,6 +30,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\SafeInvoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
@@ -41,6 +42,7 @@ use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Payment\Model\Info;
 use Magento\Sales\Model\Order\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class SafeInvoiceTest extends BaseTestCase
 {
     /**
@@ -116,8 +118,8 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
@@ -139,8 +141,8 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);

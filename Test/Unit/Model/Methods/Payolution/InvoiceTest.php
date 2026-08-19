@@ -31,6 +31,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Invoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Checkout\Model\Session;
@@ -43,6 +44,7 @@ use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class InvoiceTest extends BaseTestCase
 {
     /**
@@ -111,9 +113,8 @@ class InvoiceTest extends BaseTestCase
         $payment = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAdditionalInformation'])
-            ->addMethods(['getOrder'])
             ->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment->setData('order', $order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -137,8 +138,8 @@ class InvoiceTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $payment->method('getOrder')->willReturn($order);
+        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $payment->setData('order', $order);
 
         $this->expectException(LocalizedException::class);
         $this->classToTest->authorize($payment, 100);

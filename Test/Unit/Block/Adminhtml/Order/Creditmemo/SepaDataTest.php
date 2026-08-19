@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Order\Creditmemo;
 
 use Payone\Core\Block\Adminhtml\Order\Creditmemo\SepaData as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -36,6 +37,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class SepaDataTest extends BaseTestCase
 {
     /**
@@ -47,6 +49,11 @@ class SepaDataTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
 
     /**
      * @var Payment
@@ -64,13 +71,13 @@ class SepaDataTest extends BaseTestCase
             ->onlyMethods([
                 'getPayment',
             ])
-            ->addMethods([
-                'getPayoneRefundIban',
-                'getPayoneRefundBic',
-            ])
             ->getMock();
-        $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
-        $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
+
+        $order->setData([
+            'payone_refund_iban' => 'DE85123456782599100003',
+            'payone_refund_bic' => 'TESTTEST',
+        ]);
+
         $order->method('getPayment')->willReturn($this->payment);
 
         $creditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();

@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\RatepayShowShopConfig as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\AbstractElement;
@@ -37,6 +38,7 @@ use Payone\Core\Model\ResourceModel\RatepayProfileConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayShowShopConfigTest extends BaseTestCase
 {
     /**
@@ -48,6 +50,11 @@ class RatepayShowShopConfigTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
 
     /**
      * @var Ratepay
@@ -72,12 +79,16 @@ class RatepayShowShopConfigTest extends BaseTestCase
                 'getForm',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'test', 'label' => 'test'],
+            ],
+        ]);
+
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
 
@@ -117,13 +128,16 @@ class RatepayShowShopConfigTest extends BaseTestCase
 
         $element = $this->getMockBuilder(Multiselect::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOriginalData'])
+            ->onlyMethods([])
             ->getMock();
-        $element->method('getOriginalData')->willReturn($origData);
+
+        $element->setData([
+            'original_data' => $origData,
+        ]);
 
         $this->classToTest->setData('element', $element);
 
-        $this->ratepayHelper->method('getRatepayShopConfigIdsByPaymentMethod')->willReturn(['12345']);
+        $this->ratepayHelper->method('getRatepayShopConfigIdsByPaymentMethod')->with('ratepay_invoice')->willReturn(['12345']);
 
         $expected = [['shop_id' => '12345']];
         $this->ratepayProfileResource->method('getProfileConfigsByIds')->willReturn($expected);

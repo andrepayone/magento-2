@@ -29,12 +29,14 @@ namespace Payone\Core\Test\Unit\Model\System\Config\Backend;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\System\Config\Backend\Upload as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\ApplePay;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
 
+#[AllowMockObjectsWithoutExpectations]
 class UploadTest extends BaseTestCase
 {
     /**

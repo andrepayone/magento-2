@@ -29,12 +29,15 @@ namespace Payone\Core\Test\Unit\Model\ResourceModel;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Model\ResourceModel\SavedPaymentData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
+#[AllowMockObjectsWithoutExpectations]
 class SavedPaymentDataTest extends BaseTestCase
 {
     /**
@@ -55,16 +58,18 @@ class SavedPaymentDataTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
-
-        $this->connection = $this->getMockBuilder(Select::class)
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['where', 'order', 'from'])
-            ->addMethods(['fetchAll', 'fetchOne', 'select', 'insert', 'update', 'delete'])
             ->getMock();
-        $this->connection->method('select')->willReturn($this->connection);
-        $this->connection->method('from')->willReturn($this->connection);
-        $this->connection->method('where')->willReturn($this->connection);
-        $this->connection->method('order')->willReturn($this->connection);
+        $select->method('where')->willReturn($select);
+        $select->method('order')->willReturn($select);
+        $select->method('from')->willReturn($select);
+
+        $this->connection = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->connection->method('select')->willReturn($select);
         $this->connection->method('update')->willReturn($this->connection);
         $this->connection->method('delete')->willReturn($this->connection);
 

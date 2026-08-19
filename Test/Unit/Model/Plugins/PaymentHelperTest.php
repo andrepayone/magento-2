@@ -30,6 +30,7 @@ use Payone\Core\Model\Methods\Klarna\Invoice;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Model\Plugins\PaymentHelper as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
@@ -39,6 +40,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Payment\Model\Method\Factory;
 
+#[AllowMockObjectsWithoutExpectations]
 class PaymentHelperTest extends BaseTestCase
 {
     /**

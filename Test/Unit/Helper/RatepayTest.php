@@ -28,11 +28,10 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Ratepay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Helper\Shop;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Genericpayment\Profile;
 use Payone\Core\Model\ResourceModel\RatepayProfileConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
@@ -41,6 +40,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Api\Data\CustomerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class RatepayTest extends BaseTestCase
 {
     /**
@@ -92,10 +92,12 @@ class RatepayTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['getPayoneRatepayDeviceFingerprintToken', 'setPayoneRatepayDeviceFingerprintToken'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'context' => $context,
@@ -159,7 +161,7 @@ class RatepayTest extends BaseTestCase
 
     public function testGetRatepayDeviceFingerprintToken()
     {
-        $this->checkoutSession->method('getPayoneRatepayDeviceFingerprintToken')->willReturn(null);
+        
 
         $result = $this->classToTest->getRatepayDeviceFingerprintToken();
         $this->assertNotEmpty($result);

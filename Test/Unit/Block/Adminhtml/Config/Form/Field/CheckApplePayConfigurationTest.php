@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\CheckApplePayConfiguration as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Payone\Core\Helper\ApplePay;
@@ -34,6 +35,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\View\LayoutInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class CheckApplePayConfigurationTest extends BaseTestCase
 {
     /**
@@ -72,22 +74,21 @@ class CheckApplePayConfigurationTest extends BaseTestCase
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
-                    'getHtmlId'
-            ])
-            ->addMethods([
-                'unsScope',
-                'unsCanUseWebsiteValue',
-                'unsCanUseDefaultValue',
-                'getLabel',
-                'getOriginalData'
+                'getHtmlId'
             ])
             ->getMock();
-        $element->method('unsScope')->willReturn($element);
-        $element->method('unsCanUseWebsiteValue')->willReturn($element);
-        $element->method('unsCanUseDefaultValue')->willReturn($element);
+
         $element->method('getHtmlId')->willReturn('test');
-        $element->method('getLabel')->willReturn('test');
-        $element->method('getOriginalData')->willReturn(['path' => 'payone_payment/ratepay_invoice']);
+
+        $element->setData([
+            'label' => 'test',
+            'original_data' => [
+                'path' => 'payone_payment/ratepay_invoice'
+            ],
+            'scope' => true,
+            'can_use_website_value' => true,
+            'can_use_default_value' => true,
+        ]);
 
         $result = $this->classToTest->render($element);
         $this->assertNotEmpty($result);

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Risk;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Risk\Addresscheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Addresscheck;
 use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Toolkit;
@@ -40,6 +41,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Api\CartRepositoryInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AddresscheckTest extends BaseTestCase
 {
     /**
@@ -87,10 +89,9 @@ class AddresscheckTest extends BaseTestCase
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['isVirtual'])
-            ->addMethods(['getSubtotal'])
             ->getMock();
         $this->quote->method('isVirtual')->willReturn(false);
-        $this->quote->method('getSubtotal')->willReturn(100);
+        $this->quote->setData('subtotal', 100);
 
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
@@ -101,13 +102,17 @@ class AddresscheckTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'getPayoneBillingAddresscheckScore',
-                'getPayoneShippingAddresscheckScore',
-                'unsPayoneBillingAddresscheckScore',
-                'unsPayoneShippingAddresscheckScore'])
+            ->onlyMethods(['__call'])
             ->getMock();
-        $checkoutSession->method('getPayoneShippingAddresscheckScore')->willReturn(null);
+        $checkoutSessionData = [
+            'getPayoneShippingAddresscheckScore' => null,
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
 
         $this->quoteRepository = $this->getMockBuilder(CartRepositoryInterface::class)->disableOriginalConstructor()->getMock();
         $this->quoteRepository->method('getActive')->willReturn($this->quote);
@@ -175,9 +180,8 @@ class AddresscheckTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $address->setData('payone_addresscheck_score', null);
         $address->method('getStreet')->willReturn(['Teststr. 12', '3rd floor']);
 
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'VALID', 'street' => 'Another str. 7', 'firstname' => 'Patrick']);
@@ -194,9 +198,8 @@ class AddresscheckTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $address->setData('payone_addresscheck_score', null);
 
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'ERROR']);
         $this->databaseHelper->expects($this->any())
@@ -215,9 +218,8 @@ class AddresscheckTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $address->setData('payone_addresscheck_score', null);
 
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'INVALID', 'customermessage' => 'Address invalid']);
         $this->databaseHelper->expects($this->any())
@@ -235,9 +237,8 @@ class AddresscheckTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $address->setData('payone_addresscheck_score', null);
 
         $this->addresscheck->method('sendRequest')->willReturn([]);
         $this->databaseHelper->expects($this->any())
@@ -255,9 +256,8 @@ class AddresscheckTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
-            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
-        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $address->setData('payone_addresscheck_score', null);
 
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'INVALID', 'customermessage' => 'Address invalid']);
         $this->databaseHelper->expects($this->any())

@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Helper;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Helper\Toolkit;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\App\Helper\Context;
@@ -44,6 +45,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Directory\Model\Currency;
 
+#[AllowMockObjectsWithoutExpectations]
 class ToolkitTest extends BaseTestCase
 {
     /**
@@ -245,9 +247,9 @@ class ToolkitTest extends BaseTestCase
 
         $dataObject = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAdditionalData'])
+            ->onlyMethods([])
             ->getMock();
-        $dataObject->method('getAdditionalData')->willReturn(['key' => $expected]);
+        $dataObject->setData('additional_data', ['key' => $expected]);
 
         $this->shopHelper->method('getMagentoVersion')->willReturn('2.1.3');
 

@@ -28,10 +28,12 @@ namespace Payone\Core\Test\Unit\Block\Form;
 
 use Payone\Core\Block\Form\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Country;
 
+#[AllowMockObjectsWithoutExpectations]
 class DebitTest extends BaseTestCase
 {
     /**

@@ -28,6 +28,7 @@ namespace Payone\Core\Test\Unit\Setup;
 
 use Payone\Core\Setup\UpgradeData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Customer\Setup\CustomerSetupFactory;
@@ -35,11 +36,13 @@ use Magento\Customer\Setup\CustomerSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
+use Magento\Framework\DB\Select;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Payment;
 
+#[AllowMockObjectsWithoutExpectations]
 class UpgradeDataTest extends BaseTestCase
 {
     /**
@@ -90,15 +93,19 @@ class UpgradeDataTest extends BaseTestCase
     {
         $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
 
-        $connection = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
-            ->addMethods(['from', 'where'])
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['from', 'where'])
+            ->getMock();
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
-        $connection->method('select')->willReturn($connection);
-        $connection->method('from')->willReturn($connection);
-        $connection->method('where')->willReturn($connection);
+        $connection->method('select')->willReturn($select);
         $connection->method('update')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
 
@@ -117,15 +124,19 @@ class UpgradeDataTest extends BaseTestCase
     {
         $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
 
-        $connection = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
-            ->addMethods(['from', 'where'])
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['from', 'where'])
+            ->getMock();
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
-        $connection->method('select')->willReturn($connection);
-        $connection->method('from')->willReturn($connection);
-        $connection->method('where')->willReturn($connection);
+        $connection->method('select')->willReturn($select);
         $connection->method('update')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
 

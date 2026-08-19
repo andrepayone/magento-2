@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\KlarnaStoreId as ClassToTest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Factory;
 use Payone\Core\Model\Source\KlarnaCountry;
@@ -36,6 +37,7 @@ use Magento\Framework\Data\Form\AbstractForm;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class KlarnaStoreIdTest extends BaseTestCase
 {
     /**
@@ -47,6 +49,8 @@ class KlarnaStoreIdTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    protected $needsObjectManagerMock = true;
 
     protected function setUp(): void
     {
@@ -62,15 +66,18 @@ class KlarnaStoreIdTest extends BaseTestCase
                 'getName',
                 'getElementHtml'
             ])
-            ->addMethods([
-                'setName',
-                'setHtmlId',
-                'setValues',
-            ])
             ->getMock();
+
         $element->method('getForm')->willReturn($form);
-        $element->method('getName')->willReturn("test");
         $element->method('getElementHtml')->willReturn('html');
+
+        $element->setData([
+            'name' => 'test',
+            'html_id' => 'test',
+            'values' => [
+                ['value' => 'DE', 'label' => 'Deutschland'],
+            ],
+        ]);
 
         $elementFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
         $elementFactory->method('create')->willReturn($element);

@@ -28,11 +28,13 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Database;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
@@ -40,6 +42,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\ScopeInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class DatabaseTest extends BaseTestCase
 {
     /**
@@ -80,17 +83,20 @@ class DatabaseTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $this->connection = $this->getMockBuilder(Select::class)
+        $select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['from', 'where', 'limit', 'order', 'joinInner'])
-            ->addMethods(['fetchOne', 'fetchAll', 'select', 'update'])
             ->getMock();
-        $this->connection->method('select')->willReturn($this->connection);
-        $this->connection->method('from')->willReturn($this->connection);
-        $this->connection->method('where')->willReturn($this->connection);
-        $this->connection->method('limit')->willReturn($this->connection);
-        $this->connection->method('order')->willReturn($this->connection);
-        $this->connection->method('joinInner')->willReturn($this->connection);
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+        $select->method('limit')->willReturn($select);
+        $select->method('order')->willReturn($select);
+        $select->method('joinInner')->willReturn($select);
+
+        $this->connection = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->connection->method('select')->willReturn($select);
 
         $this->databaseResource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $this->databaseResource->method('getConnection')->willReturn($this->connection);
@@ -204,7 +210,6 @@ class DatabaseTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId'])
-            ->addMethods(['getAddressType'])
             ->getMock();
         $address->method('getFirstname')->willReturn('Paul');
         $address->method('getLastname')->willReturn('Payer');
@@ -215,7 +220,7 @@ class DatabaseTest extends BaseTestCase
         $address->method('getCountryId')->willReturn('DE');
         $address->method('getId')->willReturn('5');
         $address->method('getCustomerId')->willReturn('18');
-        $address->method('getAddressType')->willReturn('billing');
+        $address->setData('address_type', 'billing');
 
         $this->databaseResource->method('getTableName')->willReturn('quote_address');
         $this->connection->method('fetchOne')->willReturn($expected);
@@ -232,7 +237,6 @@ class DatabaseTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId'])
-            ->addMethods(['getAddressType'])
             ->getMock();
         $address->method('getFirstname')->willReturn('Paul');
         $address->method('getLastname')->willReturn('Payer');
@@ -243,7 +247,7 @@ class DatabaseTest extends BaseTestCase
         $address->method('getCountryId')->willReturn('DE');
         $address->method('getId')->willReturn('5');
         $address->method('getCustomerId')->willReturn('18');
-        $address->method('getAddressType')->willReturn('billing');
+        $address->setData('address_type', 'billing');
 
         $this->databaseResource->method('getTableName')->willReturn('quote_address');
         $this->connection->method('fetchOne')->willReturn(false);

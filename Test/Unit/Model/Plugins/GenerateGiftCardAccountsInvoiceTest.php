@@ -39,8 +39,10 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class GenerateGiftCardAccountsInvoiceTest extends TestCase
 {
     /**
@@ -66,8 +68,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
         $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
                             ->disableOriginalConstructor()
-                            ->addMethods(['getMethodInstance'])
-                            ->getMockForAbstractClass();
+                            ->onlyMethods([])->getMockForAbstractClass();
         $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
 
         $orderMock = $this->createMock(Order::class);
@@ -88,8 +89,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         /** @var Observer | Mock $observerMock */
         $observerMock = $this->getMockBuilder(Observer::class)
                              ->disableOriginalConstructor()
-                             ->addMethods(['getInvoice'])
-                             ->getMockForAbstractClass();
+                             ->onlyMethods([])->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
         $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
@@ -108,8 +108,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
         $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
                             ->disableOriginalConstructor()
-                            ->addMethods(['getMethodInstance'])
-                            ->getMockForAbstractClass();
+                            ->onlyMethods([])->getMockForAbstractClass();
         $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
 
         $orderMock = $this->createMock(Order::class);
@@ -129,8 +128,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         /** @var Observer | Mock $observerMock */
         $observerMock = $this->getMockBuilder(Observer::class)
                              ->disableOriginalConstructor()
-                             ->addMethods(['getInvoice'])
-                             ->getMockForAbstractClass();
+                             ->onlyMethods([])->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
         $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
@@ -149,8 +147,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
         $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
                             ->disableOriginalConstructor()
-                            ->addMethods(['getMethodInstance'])
-                            ->getMockForAbstractClass();
+                            ->onlyMethods([])->getMockForAbstractClass();
         $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
 
         $orderMock = $this->createMock(Order::class);
@@ -170,8 +167,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         /** @var Observer | Mock $observerMock */
         $observerMock = $this->getMockBuilder(Observer::class)
                              ->disableOriginalConstructor()
-                             ->addMethods(['getInvoice'])
-                             ->getMockForAbstractClass();
+                             ->onlyMethods([])->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
         $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);

@@ -30,6 +30,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Handler\Cancellation as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
@@ -38,6 +39,7 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\ResourceModel\TransactionStatus;
 
+#[AllowMockObjectsWithoutExpectations]
 class CancellationTest extends BaseTestCase
 {
     /**
@@ -72,28 +74,20 @@ class CancellationTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'getPayoneCustomerIsRedirected',
-                'unsPayoneCustomerIsRedirected',
-                'getLastOrderId',
-                'unsLastOrderId',
-                'getLastQuoteId',
-                'unsLastQuoteId',
-                'unsLastSuccessQuoteId',
-                'unsLastRealOrderId',
-                'setPayoneCanceledOrder',
-                'setIsPayoneRedirectCancellation',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
-        $checkoutSession->method('getPayoneCustomerIsRedirected')->willReturn(true);
-        $checkoutSession->method('getLastOrderId')->willReturn(123);
+        $checkoutSessionData = [
+            'getPayoneCustomerIsRedirected' => true,
+            'getLastOrderId' => 123,
+            'getLastQuoteId' => 123,
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
         $checkoutSession->method('getQuote')->willReturn($currentQuote);
-        $checkoutSession->method('getLastQuoteId')->willReturn(123);
-        $checkoutSession->method('unsLastQuoteId')->willReturn($checkoutSession);
-        $checkoutSession->method('unsLastSuccessQuoteId')->willReturn($checkoutSession);
-        $checkoutSession->method('unsLastOrderId')->willReturn($checkoutSession);
-        $checkoutSession->method('unsLastRealOrderId')->willReturn($checkoutSession);
 
         $this->order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $this->order->method('load')->willReturn($this->order);

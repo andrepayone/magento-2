@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\Paypal as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Model\PayoneConfig;
@@ -47,6 +48,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
 use Magento\Framework\Registry;
 
+#[AllowMockObjectsWithoutExpectations]
 class BaseMethodTest extends BaseTestCase
 {
     /**
@@ -148,8 +150,8 @@ class BaseMethodTest extends BaseTestCase
     {
         $this->shopHelper->method('getConfigParam')->willReturn('display');
 
-        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
-        $payment->method('getAdditionalInformation')->willReturn([]);
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $payment->setData('additional_information', []);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
@@ -159,8 +161,8 @@ class BaseMethodTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getStore')->willReturn($store);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'REDIRECT', 'txid' => '12345', 'redirecturl' => 'http://testdomain.com'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
@@ -171,8 +173,8 @@ class BaseMethodTest extends BaseTestCase
 
     public function testAuthorizeError()
     {
-        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
-        $payment->method('getAdditionalInformation')->willReturn([]);
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $payment->setData('additional_information', []);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
@@ -181,8 +183,8 @@ class BaseMethodTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getStore')->willReturn($store);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '42', 'customermessage' => 'Test error'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
@@ -195,8 +197,8 @@ class BaseMethodTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $this->registry->method('registry')->willReturn(true);
 
@@ -219,10 +221,10 @@ class BaseMethodTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCreditmemo', 'getOrder'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getCreditmemo')->willReturn($creditmemo);
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo->setData('creditmemo', $creditmemo);
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'APPROVED'];
         $this->debitRequest->method('sendRequest')->willReturn($aResponse);
@@ -239,8 +241,8 @@ class BaseMethodTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '42', 'customermessage' => 'Test error'];
         $this->debitRequest->method('sendRequest')->willReturn($aResponse);
@@ -257,8 +259,8 @@ class BaseMethodTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $paymentInfo->setData('order', $order);
 
         $this->debitRequest->method('sendRequest')->willReturn(false);
 
@@ -286,10 +288,10 @@ class BaseMethodTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn(true);
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', true);
 
         $aResponse = ['status' => 'APPROVED'];
         $this->captureRequest->method('sendRequest')->willReturn($aResponse);
@@ -308,10 +310,10 @@ class BaseMethodTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn(true);
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', true);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '42', 'customermessage' => 'Test error'];
         $this->captureRequest->method('sendRequest')->willReturn($aResponse);
@@ -330,10 +332,10 @@ class BaseMethodTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn(true);
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', true);
 
         $this->captureRequest->method('sendRequest')->willReturn(false);
 
@@ -343,8 +345,8 @@ class BaseMethodTest extends BaseTestCase
 
     public function testCaptureAuth()
     {
-        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
-        $payment->method('getAdditionalInformation')->willReturn([]);
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $payment->setData('additional_information', []);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
@@ -355,10 +357,10 @@ class BaseMethodTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getOrder', 'getParentTransactionId'])
+            ->onlyMethods([])
             ->getMock();
-        $paymentInfo->method('getOrder')->willReturn($order);
-        $paymentInfo->method('getParentTransactionId')->willReturn(false);
+        $paymentInfo->setData('order', $order);
+        $paymentInfo->setData('parent_transaction_id', false);
 
         $aResponse = ['status' => 'REDIRECT', 'txid' => '12345', 'redirecturl' => 'http://testdomain.com'];
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);

@@ -28,13 +28,20 @@ namespace Payone\Core\Test\Unit\Block\Onepage\Review;
 
 use Payone\Core\Block\Onepage\Review\Details as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DetailsTest extends BaseTestCase
 {
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
     /**
      * @var ClassToTest
      */

@@ -28,9 +28,11 @@ namespace Payone\Core\Test\Unit\Helper\Connection;
 
 use Payone\Core\Helper\Connection\CurlPhp;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class CurlPhpTest extends BaseTestCase
 {
     /**

@@ -31,6 +31,7 @@ use Payone\Core\Helper\Checkout;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\AmazonPay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Payone\Core\Service\V1\Data\EditAddressResponse;
@@ -52,6 +53,7 @@ use Magento\Framework\App\ViewInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Element\BlockInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmazonPayTest extends BaseTestCase
 {
     /**
@@ -68,6 +70,13 @@ class AmazonPayTest extends BaseTestCase
      * @var CreateCheckoutSessionPayload|\PHPUnit\Framework\MockObject\MockObject
      */
     private $createCheckoutSessionPayload;
+
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
 
     protected function setUp(): void
     {
@@ -102,42 +111,27 @@ class AmazonPayTest extends BaseTestCase
                 'setCustomerIsGuest',
                 'setPayment',
             ])
-            ->addMethods([
-                'setCustomerId',
-                'setCustomerEmail',
-                'setCustomerGroupId',
-                'setInventoryProcessed',
-            ])
             ->getMock();
         $quote->method('getPayment')->willReturn($payment);
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('collectTotals')->willReturn($quote);
         $quote->method('setIsActive')->willReturn($quote);
-        $quote->method('setCustomerId')->willReturn($quote);
-        $quote->method('setCustomerEmail')->willReturn($quote);
         $quote->method('setCustomerIsGuest')->willReturn($quote);
-        $quote->method('setCustomerGroupId')->willReturn($quote);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'getAmazonWorkorderId',
-                'setAmazonWorkorderId',
-                'setAmazonAddressToken',
-                'setAmazonReferenceId',
-                'setPayoneIsAmazonPayExpressPayment',
-                'setPayoneWorkorderId',
-                'setPayoneQuoteComparisonString',
-                'getPayoneAmazonPayPayload',
-                'getPayoneAmazonPaySignature',
-                'setPayoneCustomerIsRedirected',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
-        $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
+        $this->checkoutSessionData['getAmazonWorkorderId'] = null;
         $checkoutSession->method('getQuote')->willReturn($quote);
-        $checkoutSession->method('getPayoneAmazonPayPayload')->willReturn('test');
-        $checkoutSession->method('getPayoneAmazonPaySignature')->willReturn('test');
+        $this->checkoutSessionData['getPayoneAmazonPayPayload'] = 'test';
+        $this->checkoutSessionData['getPayoneAmazonPaySignature'] = 'test';
 
         $aGetConfigurationResponse = [
             'status' => 'OK',

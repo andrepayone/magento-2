@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Controller\Onepage;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
@@ -39,13 +40,14 @@ use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
-use Magento\Framework\App\Console\Response;
+use Magento\Framework\App\Response\Http as Response;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\Result\Page;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DebitTest extends BaseTestCase
 {
     /**
@@ -83,6 +85,13 @@ class DebitTest extends BaseTestCase
      */
     private $managemandateRequest;
 
+    /**
+     * Return values for the magic getters of the checkout session
+     *
+     * @var array
+     */
+    private $checkoutSessionData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -94,7 +103,7 @@ class DebitTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setRedirect'])
+            ->onlyMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
@@ -115,10 +124,16 @@ class DebitTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods(['setPayoneMandate', 'getPayoneMandate', 'setPayoneDebitError'])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
+
+        $this->checkoutSession->method('__call')->willReturnCallback(function ($method) {
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $this->checkoutSession;
+        });
 
         $page = $this->getMockBuilder(Page::class)->disableOriginalConstructor()->getMock();
 
@@ -150,7 +165,7 @@ class DebitTest extends BaseTestCase
         $paymentMethod = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $this->payment->method('getMethodInstance')->willReturn($paymentMethod);
         $this->request->method('getParam')->willReturn(0);
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(['dummyMandate']);
+        $this->checkoutSessionData['getPayoneMandate'] = ['dummyMandate'];
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -162,7 +177,7 @@ class DebitTest extends BaseTestCase
         $paymentMethod->method('getCustomConfigParam')->willReturn(true);
         $this->payment->method('getMethodInstance')->willReturn($paymentMethod);
         $this->request->method('getParam')->willReturn(1);
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => 5]);
+        $this->checkoutSessionData['getPayoneMandate'] = ['mandate_identification' => 5];
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -174,7 +189,7 @@ class DebitTest extends BaseTestCase
         $paymentMethod->method('getCustomConfigParam')->willReturn(true);
         $this->payment->method('getMethodInstance')->willReturn($paymentMethod);
         $this->request->method('getParam')->willReturn(1);
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(null);
+        $this->checkoutSessionData['getPayoneMandate'] = null;
         $this->managemandateRequest->method('sendRequest')->willReturn(['status' => 'VALID', 'mandate_status' => 'valid']);
 
         $result = $this->classToTest->execute();
@@ -187,7 +202,7 @@ class DebitTest extends BaseTestCase
         $paymentMethod->method('getCustomConfigParam')->willReturn(true);
         $this->payment->method('getMethodInstance')->willReturn($paymentMethod);
         $this->request->method('getParam')->willReturn(1);
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(null);
+        $this->checkoutSessionData['getPayoneMandate'] = null;
         $this->managemandateRequest->method('sendRequest')->willReturn(['status' => 'VALID', 'mandate_status' => 'pending']);
 
         $result = $this->classToTest->execute();
@@ -200,7 +215,7 @@ class DebitTest extends BaseTestCase
         $paymentMethod->method('getCustomConfigParam')->willReturn(true);
         $this->payment->method('getMethodInstance')->willReturn($paymentMethod);
         $this->request->method('getParam')->willReturn(1);
-        $this->checkoutSession->method('getPayoneMandate')->willReturn(null);
+        $this->checkoutSessionData['getPayoneMandate'] = null;
         $this->managemandateRequest->method('sendRequest')->willReturn(['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error']);
 
         $result = $this->classToTest->execute();

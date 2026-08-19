@@ -30,12 +30,14 @@ use Magento\Checkout\Model\Session;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+#[AllowMockObjectsWithoutExpectations]
 class DebitTest extends BaseTestCase
 {
     /**
@@ -60,9 +62,17 @@ class DebitTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getPayoneMandate', 'unsPayoneMandate'])
+            ->onlyMethods(['__call'])
             ->getMock();
-        $checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => '123', 'mandate_status' => 'pending']);
+        $checkoutSessionData = [
+            'getPayoneMandate' => ['mandate_identification' => '123', 'mandate_status' => 'pending'],
+        ];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
+            if (array_key_exists($method, $checkoutSessionData)) {
+                return $checkoutSessionData[$method];
+            }
+            return strpos($method, 'get') === 0 ? null : $checkoutSession;
+        });
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $toolkitHelper,
